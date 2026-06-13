@@ -1,0 +1,30 @@
+# Netlify build config.
+#
+# Netlify has no Flutter SDK preinstalled, so the build command clones the
+# stable Flutter channel (cached between builds) and compiles the web app.
+# The site is served from the domain root, so the default base-href ("/") is
+# correct — do NOT pass a subpath here.
+
+[build]
+  publish = "build/web"
+  command = """
+    if [ ! -d "$HOME/flutter/bin" ]; then
+      git clone https://github.com/flutter/flutter.git --depth 1 -b stable "$HOME/flutter"
+    fi
+    export PATH="$HOME/flutter/bin:$PATH"
+    flutter --version
+    flutter config --enable-web
+    flutter pub get
+    flutter build web --release
+  """
+
+[build.environment]
+  # Skip Flutter's first-run analytics/animation prompt in CI.
+  CI = "true"
+
+# Single-page-app fallback: route every unknown path to index.html so direct
+# links and refreshes always load the app (it then resolves the route).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
