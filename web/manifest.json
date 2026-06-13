@@ -1,11 +1,11 @@
 {
-    "name": "Muhammad Uvesh Menpurwala — Portfolio",
+    "name": "Muhammad Uvesh Menpurwala - Portfolio",
     "short_name": "Uvesh Menpurwala",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#FBFAF7",
     "theme_color": "#FBFAF7",
-    "description": "Muhammad Uvesh Menpurwala — Software Engineer specialising in mobile and cross-platform development with Flutter.",
+    "description": "Muhammad Uvesh Menpurwala - Software Engineer specialising in mobile and cross-platform development with Flutter.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

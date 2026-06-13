@@ -4,29 +4,22 @@ import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
-import '../widgets/section.dart';
 
-/// Skills — grouped and scannable. Each group is a quiet label with inline,
+/// Skills - grouped and scannable. Each group is a quiet label with inline,
 /// tag-style items. Deliberately light: thin-bordered pills, no loud badges.
-class SkillsSection extends StatelessWidget {
-  const SkillsSection({super.key, this.anchorKey});
-
-  final GlobalKey? anchorKey;
+class SkillsContent extends StatelessWidget {
+  const SkillsContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Section(
-      label: 'Skills',
-      anchorKey: anchorKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (var i = 0; i < PortfolioData.skills.length; i++) ...[
-            if (i > 0) const SizedBox(height: AppSpacing.lg),
-            _SkillGroupRow(PortfolioData.skills[i]),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < PortfolioData.skills.length; i++) ...[
+          if (i > 0) const SizedBox(height: AppSpacing.lg),
+          _SkillGroupRow(PortfolioData.skills[i]),
         ],
-      ),
+      ],
     );
   }
 }

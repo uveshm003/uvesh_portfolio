@@ -4,36 +4,29 @@ import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
 import '../widgets/hover_link.dart';
-import '../widgets/section.dart';
 
-/// Experience — list-style entries (role · company · dates) each with a short
+/// Experience - list-style entries (role · company · dates) each with a short
 /// prose blurb. Quiet, not boxed-in: entries are separated by whitespace and a
 /// hairline rather than cards.
-class ExperienceSection extends StatelessWidget {
-  const ExperienceSection({super.key, this.anchorKey});
-
-  final GlobalKey? anchorKey;
+class ExperienceContent extends StatelessWidget {
+  const ExperienceContent({super.key});
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
 
-    return Section(
-      label: 'Experience',
-      anchorKey: anchorKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (var i = 0; i < PortfolioData.experiences.length; i++) ...[
-            if (i > 0) ...[
-              const SizedBox(height: AppSpacing.xl),
-              Divider(color: palette.divider, height: 1),
-              const SizedBox(height: AppSpacing.xl),
-            ],
-            _ExperienceEntry(PortfolioData.experiences[i]),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < PortfolioData.experiences.length; i++) ...[
+          if (i > 0) ...[
+            const SizedBox(height: AppSpacing.xl),
+            Divider(color: palette.divider, height: 1),
+            const SizedBox(height: AppSpacing.xl),
           ],
+          _ExperienceEntry(PortfolioData.experiences[i]),
         ],
-      ),
+      ],
     );
   }
 }

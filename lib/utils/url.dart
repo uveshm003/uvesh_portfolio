@@ -13,6 +13,6 @@ Future<void> openUrl(String url) async {
       webOnlyWindowName: kIsWeb ? '_blank' : null,
     );
   } catch (_) {
-    // Swallow — opening an external link should never throw to the UI.
+    // Swallow - opening an external link should never throw to the UI.
   }
 }

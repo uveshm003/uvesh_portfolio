@@ -7,7 +7,7 @@ import '../theme/app_typography.dart';
 import '../widgets/content_container.dart';
 import '../widgets/hover_link.dart';
 
-/// Footer — grouped links (Contact / Social / Built with) and a copyright line.
+/// Footer - grouped links (Contact / Social / Built with) and a copyright line.
 /// Separated from the page body by a hairline and a little breathing room.
 class FooterSection extends StatelessWidget {
   const FooterSection({super.key});
@@ -83,7 +83,7 @@ class _FooterGroup extends StatelessWidget {
   }
 }
 
-/// "Built with" credits — these are informational links, not personal contacts.
+/// "Built with" credits - these are informational links, not personal contacts.
 class _BuiltWithGroup extends StatelessWidget {
   const _BuiltWithGroup();
 

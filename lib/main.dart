@@ -34,7 +34,7 @@ class _PortfolioAppState extends State<PortfolioApp> {
       valueListenable: _themeController,
       builder: (context, mode, _) {
         return MaterialApp.router(
-          title: '${PortfolioData.name} — ${PortfolioData.tagline}',
+          title: '${PortfolioData.name} - ${PortfolioData.tagline}',
           debugShowCheckedModeBanner: false,
           themeMode: mode,
           theme: AppTheme.light(),

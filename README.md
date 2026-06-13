@@ -1,4 +1,4 @@
-# Uvesh Menpurwala — Portfolio
+# Uvesh Menpurwala - Portfolio
 
 A minimalist, prose-forward personal portfolio built with **Flutter Web**. Static and content-driven: no backend, database, or analytics.
 
@@ -21,23 +21,30 @@ That serves the site in Chrome with hot reload. To run on desktop instead (the l
 
 ## Edit my content
 
-**All text lives in [`lib/data/portfolio_data.dart`](lib/data/portfolio_data.dart).** Edit it there — never in the widgets. It holds:
+**All text lives in [`lib/data/portfolio_data.dart`](lib/data/portfolio_data.dart).** Edit it there - never in the widgets. It holds:
 
 - Identity (name, tagline, location) and contact/social links
 - The intro prose, including which words are inline links (`ProseSpan(text, url: ...)`)
-- `experiences`, `projects`, `skills`, `education` — typed lists; add/remove/reorder entries freely
+- `experiences`, `projects`, `skills`, `education` - typed lists; add/remove/reorder entries freely
+- `navItems` - the top-nav pages and their routes (reorder/rename freely)
+- `blogs` - writing entries (`BlogPost`); empty by default, the Blog page shows a tidy "coming soon" state until you add one
+- `books` - your reading list (`Book`); also empty by default with an empty state. Both `blogs` and `books` include a commented example showing the format
+
+### The pages
+
+The site is a multi-page app (à la arpitbhayani.me) with a persistent top nav. Each entry in `navItems` maps a label to a route: **Home** (`/`, the hero/intro + education), **Experience**, **Projects**, **Skills**, **Blog**, **Books**. Add a page by adding a `NavItem`, a `GoRoute` in [`lib/router/app_router.dart`](lib/router/app_router.dart), and a page widget under `lib/pages/`.
 
 ### Swap the profile photo
 
-Replace [`assets/images/profile.jpg`](assets/images/profile.jpg) with your own photo (keep the same filename). A square image works best — it's clipped to a circle. If the file is ever missing, the hero falls back to your initials, so the layout never breaks.
+The hero photo is **off by default**. To show the arpitbhayani.me-style circular photo, open [`lib/sections/hero_section.dart`](lib/sections/hero_section.dart) and follow the comment to add the import and uncomment two lines. Then replace [`assets/images/profile.jpg`](assets/images/profile.jpg) with your own (keep the filename; a square image works best - it's clipped to a circle). If the file is ever missing, it falls back to your initials.
 
 ### Change the look
 
-All colors, spacing, and type styles are theme tokens — there are no magic numbers in the widgets:
+All colors, spacing, and type styles are theme tokens - there are no magic numbers in the widgets:
 
-- [`lib/theme/app_colors.dart`](lib/theme/app_colors.dart) — light/dark palettes
-- [`lib/theme/app_typography.dart`](lib/theme/app_typography.dart) — the Fraunces (serif) + Inter (sans) pairing and type scale
-- [`lib/theme/app_spacing.dart`](lib/theme/app_spacing.dart) — spacing scale, breakpoints, reading-measure width
+- [`lib/theme/app_colors.dart`](lib/theme/app_colors.dart) - light/dark palettes
+- [`lib/theme/app_typography.dart`](lib/theme/app_typography.dart) - the Fraunces (serif) + Inter (sans) pairing and type scale
+- [`lib/theme/app_spacing.dart`](lib/theme/app_spacing.dart) - spacing scale, breakpoints, reading-measure width
 
 > **Note:** fonts are loaded at runtime from Google Fonts' CDN via the `google_fonts` package, so first paint depends on the network. To make the site fully self-contained/offline, download the Fraunces and Inter `.ttf` files, declare them under `flutter > fonts` in `pubspec.yaml`, and `google_fonts` will use the bundled copies automatically.
 
@@ -57,13 +64,13 @@ flutter build web --base-href "/uvesh_portfolio/"
 > - **Project repo** (`github.com/uveshm003/<repo-name>`) → `--base-href "/<repo-name>/"`
 > - **User/organization site** (a repo literally named `uveshm003.github.io`) → `--base-href "/"`
 >
-> If the page loads blank with 404s for `main.dart.js`, the base-href doesn't match the path you're served from — that's the first thing to check.
+> If the page loads blank with 404s for `main.dart.js`, the base-href doesn't match the path you're served from - that's the first thing to check.
 
 The compiled site lands in `build/web/`. Routing is hash-based (e.g. `/#/`), which GitHub Pages serves without any server-side rewrite config.
 
 ### Deploy
 
-**Option A — `gh-pages` branch (manual):**
+**Option A - `gh-pages` branch (manual):**
 
 ```bash
 flutter build web --base-href "/uvesh_portfolio/"
@@ -73,7 +80,7 @@ npx gh-pages -d build/web
 
 Then in the repo's **Settings → Pages**, set the source to the `gh-pages` branch.
 
-**Option B — GitHub Actions (automatic on push):** add `.github/workflows/deploy.yml`:
+**Option B - GitHub Actions (automatic on push):** add `.github/workflows/deploy.yml`:
 
 ```yaml
 name: Deploy to GitHub Pages
@@ -119,10 +126,11 @@ lib/
   main.dart                 App root + theme toggle wiring
   data/portfolio_data.dart  ← all content lives here
   theme/                    colors, typography, spacing tokens, theme + controller
-  widgets/                  reusable pieces (nav, section, links, avatar, prose)
-  sections/                 one file per page section (hero, experience, …, footer)
-  pages/                    home page (scroll + anchors) and 404 fallback
-  router/app_router.dart    go_router config (home + catch-all 404)
+  widgets/                  shell (nav + footer), page scaffold, links, prose, avatar
+  sections/                 content blocks (hero, experience, projects, skills,
+                            education, blog, books, footer)
+  pages/                    one widget per route (home, experience, … books) + 404
+  router/app_router.dart    go_router: a ShellRoute wrapping all pages + 404
 ```
 
 ## Tests

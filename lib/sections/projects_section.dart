@@ -5,31 +5,24 @@ import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import '../utils/url.dart';
-import '../widgets/section.dart';
 
-/// Projects — selected work as quiet, numbered cards: an index, title and
+/// Projects - selected work as quiet, numbered cards: an index, title and
 /// category, a tech-tag row, and a short description. Cards with a link lift
 /// gently and reveal an arrow on hover. Restrained, but a touch more crafted
 /// than the plain list elsewhere.
-class ProjectsSection extends StatelessWidget {
-  const ProjectsSection({super.key, this.anchorKey});
-
-  final GlobalKey? anchorKey;
+class ProjectsContent extends StatelessWidget {
+  const ProjectsContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Section(
-      label: 'Projects',
-      anchorKey: anchorKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (var i = 0; i < PortfolioData.projects.length; i++) ...[
-            if (i > 0) const SizedBox(height: AppSpacing.md),
-            _ProjectCard(index: i + 1, project: PortfolioData.projects[i]),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < PortfolioData.projects.length; i++) ...[
+          if (i > 0) const SizedBox(height: AppSpacing.md),
+          _ProjectCard(index: i + 1, project: PortfolioData.projects[i]),
         ],
-      ),
+      ],
     );
   }
 }
@@ -117,7 +110,7 @@ class _ProjectCardState extends State<_ProjectCard> {
         behavior: HitTestBehavior.opaque,
         child: Semantics(
           link: true,
-          label: '${project.title} — open project',
+          label: '${project.title} - open project',
           child: card,
         ),
       ),
@@ -147,7 +140,7 @@ class _HeaderRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Editorial index — 01, 02, …
+        // Editorial index - 01, 02, …
         Padding(
           padding: const EdgeInsets.only(top: 2, right: AppSpacing.sm),
           child: Text(

@@ -1,61 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
 import '../theme/theme_controller.dart';
-import '../utils/url.dart';
 import 'content_container.dart';
-import 'hover_link.dart';
 
-/// A nav destination that scrolls to an in-page section.
-typedef SectionTarget = ({String label, VoidCallback onTap});
-
-/// Thin, sticky top navigation: name on the left, section + external links and
-/// a theme toggle on the right. Collapses to a single menu button on mobile.
+/// Thin, sticky top navigation. The name (left) routes Home; the page links
+/// (right) route to each section and highlight the active page. Collapses to a
+/// single menu button on narrow screens. A theme toggle sits at the far right.
 class TopNav extends StatelessWidget {
-  const TopNav({
-    super.key,
-    required this.sections,
-    required this.onHome,
-    required this.controller,
-  });
+  const TopNav({super.key, required this.controller});
 
-  final List<SectionTarget> sections;
-  final VoidCallback onHome;
   final ThemeController controller;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    // The full link row (name + 3 sections + 3 external links + toggle) only
-    // fits comfortably on wide screens; below the desktop breakpoint we
-    // collapse to a single menu button rather than crowd the bar.
     final collapse = MediaQuery.sizeOf(context).width < Breakpoints.desktop;
+    final location = GoRouterState.of(context).uri.path;
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        // Translucent so content scrolling under it stays calm, with a hairline.
-        color: Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.85),
+        color: Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.9),
         border: Border(bottom: BorderSide(color: palette.divider)),
       ),
       child: SizedBox(
         height: AppSpacing.navHeight,
         child: ContentContainer(
-          // Nav spans wider than the prose column to give the links room.
           maxWidth: 1080,
           child: Row(
             children: [
-              // Left: name → scroll to top.
-              HoverLink(
-                label: PortfolioData.shortName,
-                onTap: onHome,
-                baseColor: palette.textPrimary,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              // The link cluster takes the remaining width and hugs the right
-              // edge. FittedBox(scaleDown) is a safety net: it never scales at
-              // real widths, but guarantees the bar can never overflow.
+              _NameLink(),
               Expanded(
                 child: Align(
                   alignment: Alignment.centerRight,
@@ -64,11 +41,11 @@ class TopNav extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: collapse
                         ? _MobileMenu(
-                            sections: sections,
+                            location: location,
                             controller: controller,
                           )
                         : _DesktopLinks(
-                            sections: sections,
+                            location: location,
                             controller: controller,
                           ),
                   ),
@@ -82,25 +59,49 @@ class TopNav extends StatelessWidget {
   }
 }
 
-class _DesktopLinks extends StatelessWidget {
-  const _DesktopLinks({required this.sections, required this.controller});
+/// The name on the left - routes to Home.
+class _NameLink extends StatefulWidget {
+  @override
+  State<_NameLink> createState() => _NameLinkState();
+}
 
-  final List<SectionTarget> sections;
+class _NameLinkState extends State<_NameLink> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: () => context.go('/'),
+        behavior: HitTestBehavior.opaque,
+        child: Text(
+          PortfolioData.shortName,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: _hovered ? palette.accent : palette.textPrimary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DesktopLinks extends StatelessWidget {
+  const _DesktopLinks({required this.location, required this.controller});
+
+  final String location;
   final ThemeController controller;
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = Theme.of(context).textTheme.bodyMedium;
-
     return Row(
       children: [
-        for (final s in sections) ...[
-          HoverLink(label: s.label, onTap: s.onTap, style: labelStyle),
-          const SizedBox(width: AppSpacing.md),
-        ],
-        for (final link in PortfolioData.navExternal) ...[
-          HoverLink(label: link.label, url: link.url, style: labelStyle),
-          const SizedBox(width: AppSpacing.md),
+        for (final item in PortfolioData.navItems) ...[
+          _NavLink(item: item, active: _isActive(item.path, location)),
+          const SizedBox(width: AppSpacing.lg),
         ],
         _ThemeToggle(controller: controller),
       ],
@@ -108,11 +109,11 @@ class _DesktopLinks extends StatelessWidget {
   }
 }
 
-/// Mobile: just the theme toggle + a popup menu of every destination.
+/// Mobile: theme toggle + a popup menu of every page.
 class _MobileMenu extends StatelessWidget {
-  const _MobileMenu({required this.sections, required this.controller});
+  const _MobileMenu({required this.location, required this.controller});
 
-  final List<SectionTarget> sections;
+  final String location;
   final ThemeController controller;
 
   @override
@@ -123,23 +124,27 @@ class _MobileMenu extends StatelessWidget {
       children: [
         _ThemeToggle(controller: controller),
         const SizedBox(width: AppSpacing.xs),
-        PopupMenuButton<VoidCallback>(
+        PopupMenuButton<String>(
           icon: Icon(Icons.menu, color: palette.textPrimary, size: 22),
           tooltip: 'Menu',
           position: PopupMenuPosition.under,
           color: Theme.of(context).scaffoldBackgroundColor,
-          onSelected: (action) => action(),
+          onSelected: (path) => context.go(path),
           itemBuilder: (context) => [
-            for (final s in sections)
-              PopupMenuItem<VoidCallback>(
-                value: s.onTap,
-                child: Text(s.label),
-              ),
-            const PopupMenuDivider(),
-            for (final link in PortfolioData.navExternal)
-              PopupMenuItem<VoidCallback>(
-                value: () => openUrl(link.url),
-                child: Text(link.label),
+            for (final item in PortfolioData.navItems)
+              PopupMenuItem<String>(
+                value: item.path,
+                child: Text(
+                  item.label,
+                  style: TextStyle(
+                    color: _isActive(item.path, location)
+                        ? palette.accent
+                        : palette.textPrimary,
+                    fontWeight: _isActive(item.path, location)
+                        ? FontWeight.w600
+                        : FontWeight.w400,
+                  ),
+                ),
               ),
           ],
         ),
@@ -148,7 +153,61 @@ class _MobileMenu extends StatelessWidget {
   }
 }
 
-/// Sun/moon icon button that flips the theme via the [ThemeController].
+/// A single desktop nav link with hover + active states.
+class _NavLink extends StatefulWidget {
+  const _NavLink({required this.item, required this.active});
+
+  final NavItem item;
+  final bool active;
+
+  @override
+  State<_NavLink> createState() => _NavLinkState();
+}
+
+class _NavLinkState extends State<_NavLink> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final theme = Theme.of(context);
+    final highlight = widget.active || _hovered;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: () => context.go(widget.item.path),
+        behavior: HitTestBehavior.opaque,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.item.label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: highlight ? palette.accent : palette.textSecondary,
+                fontWeight: widget.active ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+            const SizedBox(height: 3),
+            // Underline marks the active page; fades in on hover otherwise.
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              height: 1.5,
+              width: highlight ? 16 : 0,
+              decoration: BoxDecoration(
+                color: palette.accent,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ThemeToggle extends StatelessWidget {
   const _ThemeToggle({required this.controller});
 
@@ -168,4 +227,10 @@ class _ThemeToggle extends StatelessWidget {
       icon: Icon(isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined),
     );
   }
+}
+
+/// Home ('/') matches only exactly; other pages match their path prefix.
+bool _isActive(String path, String location) {
+  if (path == '/') return location == '/';
+  return location == path || location.startsWith('$path/');
 }

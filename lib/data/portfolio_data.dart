@@ -1,6 +1,6 @@
 /// Single source of truth for every piece of copy on the site.
 ///
-/// Edit text here — never in the widgets. The models are intentionally plain
+/// Edit text here - never in the widgets. The models are intentionally plain
 /// so non-Dart edits (changing a date, adding a project) are obvious.
 library;
 
@@ -91,6 +91,48 @@ class LinkRef {
   final String url;
 }
 
+/// A top-nav destination that maps a label to an in-app route.
+class NavItem {
+  const NavItem(this.label, this.path);
+  final String label;
+  final String path;
+}
+
+/// A blog post / writing entry. Add entries to [PortfolioData.blogs] as you
+/// publish; an `url` makes the card link out.
+class BlogPost {
+  const BlogPost({
+    required this.title,
+    required this.date,
+    required this.summary,
+    this.url,
+  });
+
+  final String title;
+  final String date;
+  final String summary;
+  final String? url;
+}
+
+/// A book on the reading list.
+class Book {
+  const Book({
+    required this.title,
+    required this.author,
+    this.note,
+    this.url,
+  });
+
+  final String title;
+  final String author;
+
+  /// Optional one-line personal take.
+  final String? note;
+
+  /// Optional link (Goodreads, publisher, review, …).
+  final String? url;
+}
+
 /// ---------------------------------------------------------------------------
 /// Content
 /// ---------------------------------------------------------------------------
@@ -111,7 +153,7 @@ class PortfolioData {
   static const String githubUrl = 'https://github.com/uveshm003';
   static const String companyUrl = 'https://gasleaksensors.com';
 
-  // const string interpolation of a const String — usable in const lists.
+  // const string interpolation of a const String - usable in const lists.
   static const String emailUrl = 'mailto:$email';
   static String get phoneUrl => 'tel:${phone.replaceAll(' ', '')}';
 
@@ -147,7 +189,7 @@ class PortfolioData {
           'Primary developer on SyncIt, a strategic platform consolidating '
           'legacy Sensit applications into one cross-platform product '
           '(Android, iOS, Windows) built with Flutter on a Melos monorepo. '
-          'Took a POC to a production MVP and architected two variants — '
+          'Took a POC to a production MVP and architected two variants - '
           'SyncIt Lite (offline-first) and SyncIt Plus (cloud sync, advanced '
           'reporting). Built a shared Core Package and a Log Parsing SDK, '
           'device communication modules (log download, parsing, '
@@ -224,8 +266,8 @@ class PortfolioData {
           'Firebase · Socket.IO',
       description:
           'Multi-display delivery-robot platform of nine integrated panels. '
-          'Led the Main Panel — robot control via ROS SDK and native serial '
-          'commands — and the Advertisement Panel, driving dynamic content with '
+          'Led the Main Panel - robot control via ROS SDK and native serial '
+          'commands - and the Advertisement Panel, driving dynamic content with '
           'remote file transfer and scheduling. Added BLE and Nearby '
           'Connections for real-time device coordination.',
     ),
@@ -255,7 +297,7 @@ class PortfolioData {
       tech: 'Flutter · BLoC · ObjectBox · Hive · GoRouter · Offline-First',
       description:
           'A fully offline English-communication trainer that turns daily '
-          'practice into a guided card-draw loop — pick a category, draw a '
+          'practice into a guided card-draw loop - pick a category, draw a '
           'card, read a mini-guide, then speak against a timer and build a '
           'streak. Audio capture and playback included, shipped from a single '
           'codebase to all six Flutter platforms.',
@@ -371,17 +413,47 @@ class PortfolioData {
   ];
 
   // ---- Navigation -----------------------------------------------------------
-  /// In-page anchor targets (label -> section id used by the scroll keys).
-  static const List<String> navSections = [
-    'Experience',
-    'Projects',
-    'Skills',
+  /// Top-nav destinations, each its own page/route. Reorder freely; the shell
+  /// renders them in this order and highlights the active one.
+  static const List<NavItem> navItems = [
+    NavItem('Home', '/'),
+    NavItem('Experience', '/experience'),
+    NavItem('Projects', '/projects'),
+    NavItem('Skills', '/skills'),
+    NavItem('Blog', '/blog'),
+    NavItem('Books', '/books'),
   ];
 
   static const List<LinkRef> navExternal = [
     LinkRef('GitHub', githubUrl),
     LinkRef('LinkedIn', linkedInUrl),
     LinkRef('Email', emailUrl),
+  ];
+
+  // ---- Blog -----------------------------------------------------------------
+  /// Writing. Empty for now - add [BlogPost] entries here as you publish and
+  /// the Blog page fills in automatically (an empty list shows a tidy
+  /// "coming soon" state).
+  static const List<BlogPost> blogs = [
+    // BlogPost(
+    //   title: 'Designing an offline-first sync engine',
+    //   date: 'Jun 2026',
+    //   summary: 'Notes on conflict resolution and local-first storage.',
+    //   url: 'https://example.com/post',
+    // ),
+  ];
+
+  // ---- Books ----------------------------------------------------------------
+  /// Reading list. Empty for now - add books you've actually read and the
+  /// Books page fills in automatically (an empty list shows a tidy
+  /// placeholder). The commented entries below show the format.
+  static const List<Book> books = [
+    // Book(
+    //   title: 'Designing Data-Intensive Applications',
+    //   author: 'Martin Kleppmann',
+    //   note: 'The mental model behind reliable, scalable backends.',
+    //   url: 'https://example.com/book',
+    // ),
   ];
 
   // ---- Footer ---------------------------------------------------------------

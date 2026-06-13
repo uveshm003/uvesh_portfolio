@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// A one-time, gentle entrance animation: fade up a few pixels. Kept
 /// deliberately subtle (short duration, small offset) to honour the
-/// "minimal motion" brief. No scroll listeners, no jank — it simply plays
+/// "minimal motion" brief. No scroll listeners, no jank - it simply plays
 /// once when the widget first mounts.
 class FadeIn extends StatefulWidget {
   const FadeIn({super.key, required this.child, this.delay = Duration.zero});
