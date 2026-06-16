@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,37 +23,46 @@ class TopNav extends StatelessWidget {
     final collapse = MediaQuery.sizeOf(context).width < Breakpoints.desktop;
     final location = GoRouterState.of(context).uri.path;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.9),
-        border: Border(bottom: BorderSide(color: palette.divider)),
-      ),
-      child: SizedBox(
-        height: AppSpacing.navHeight,
-        child: ContentContainer(
-          maxWidth: 1080,
-          child: Row(
-            children: [
-              _NameLink(),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerRight,
-                    child: collapse
-                        ? _MobileMenu(
-                            location: location,
-                            controller: controller,
-                          )
-                        : _DesktopLinks(
-                            location: location,
-                            controller: controller,
-                          ),
+    // A frosted, translucent sticky bar: content scrolling beneath it blurs
+    // softly through, which reads as more polished than a flat opaque strip.
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Theme.of(
+              context,
+            ).scaffoldBackgroundColor.withValues(alpha: 0.72),
+            border: Border(bottom: BorderSide(color: palette.divider)),
+          ),
+          child: SizedBox(
+            height: AppSpacing.navHeight,
+            child: ContentContainer(
+              maxWidth: 1080,
+              child: Row(
+                children: [
+                  _NameLink(),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: collapse
+                            ? _MobileMenu(
+                                location: location,
+                                controller: controller,
+                              )
+                            : _DesktopLinks(
+                                location: location,
+                                controller: controller,
+                              ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

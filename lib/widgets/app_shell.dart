@@ -39,10 +39,18 @@ class AppShell extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Column(
+        // The routed page fills the area and owns its scroll; the frosted nav
+        // floats on top so content blurs softly through it as you scroll.
+        // (Pages reserve space for the bar via PageScaffold's top padding.)
+        body: Stack(
           children: [
-            TopNav(controller: controller),
-            Expanded(child: child),
+            Positioned.fill(child: child),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: TopNav(controller: controller),
+            ),
           ],
         ),
       ),

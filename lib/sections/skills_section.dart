@@ -31,21 +31,34 @@ class _SkillGroupRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final palette = AppPalette.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          group.label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: palette.textFaint,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.3,
-          ),
+        // A tiny accent tick + uppercase label ties the group headers to the
+        // editorial kickers used elsewhere on the site.
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 14,
+              height: 2,
+              margin: const EdgeInsets.only(right: AppSpacing.xs),
+              decoration: BoxDecoration(
+                color: palette.accent.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Text(
+              group.label.toUpperCase(),
+              style: AppTypography.sectionLabel(
+                palette.textFaint,
+              ).copyWith(fontSize: 11.5, letterSpacing: 1.3),
+            ),
+          ],
         ),
-        const SizedBox(height: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.md),
         Wrap(
           spacing: AppSpacing.xs,
           runSpacing: AppSpacing.xs,
@@ -58,27 +71,47 @@ class _SkillGroupRow extends StatelessWidget {
   }
 }
 
-class _SkillTag extends StatelessWidget {
+class _SkillTag extends StatefulWidget {
   const _SkillTag(this.label);
 
   final String label;
 
   @override
+  State<_SkillTag> createState() => _SkillTagState();
+}
+
+class _SkillTagState extends State<_SkillTag> {
+  bool _hovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.xs - 2,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.xs - 1,
+        ),
+        decoration: BoxDecoration(
+          color: _hovered ? palette.accentSoft : palette.surface,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: _hovered
+                ? palette.accent.withValues(alpha: 0.45)
+                : palette.divider,
+          ),
+        ),
+        child: Text(
+          widget.label,
+          style: AppTypography.tag(
+            _hovered ? palette.accent : palette.textSecondary,
+          ),
+        ),
       ),
-      decoration: BoxDecoration(
-        color: Theme.of(
-          context,
-        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(7),
-        border: Border.all(color: palette.divider),
-      ),
-      child: Text(label, style: AppTypography.tag(palette.textSecondary)),
     );
   }
 }

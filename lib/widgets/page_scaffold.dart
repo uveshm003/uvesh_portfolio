@@ -19,7 +19,7 @@ class PageScaffold extends StatefulWidget {
     this.title,
     this.lead,
     required this.child,
-    this.topGap = AppSpacing.xxxl,
+    this.topGap = AppSpacing.xl,
   });
 
   /// Page title. When null, no header is rendered (used by Home).
@@ -54,7 +54,11 @@ class _PageScaffoldState extends State<PageScaffold> {
     final palette = AppPalette.of(context);
 
     final body = Padding(
-      padding: EdgeInsets.only(top: widget.topGap, bottom: AppSpacing.xxl),
+      // Reserve room for the floating frosted nav, then the page's own top gap.
+      padding: EdgeInsets.only(
+        top: AppSpacing.navHeight + widget.topGap,
+        bottom: AppSpacing.xxl,
+      ),
       child: ContentContainer(
         child: FadeIn(
           child: Column(

@@ -5,6 +5,7 @@ import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import '../widgets/fade_in.dart';
+import '../widgets/hover_link.dart';
 import '../widgets/prose_text.dart';
 
 /// The hero / intro shown on the Home page: (optional circular photo,) name,
@@ -80,6 +81,26 @@ class HeroContent extends StatelessWidget {
         FadeIn(
           delay: const Duration(milliseconds: 240),
           child: ProseText(PortfolioData.intro),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        // A quiet "find me" row — actionable links that round out the intro
+        // without breaking the prose-forward feel.
+        FadeIn(
+          delay: const Duration(milliseconds: 320),
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.lg,
+            runSpacing: AppSpacing.sm,
+            children: [
+              for (final link in PortfolioData.navExternal)
+                HoverLink(
+                  label: link.label,
+                  url: link.url,
+                  baseColor: palette.textSecondary,
+                  showUnderlineWhenIdle: true,
+                ),
+            ],
+          ),
         ),
       ],
     );

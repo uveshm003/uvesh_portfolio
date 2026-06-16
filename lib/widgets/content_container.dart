@@ -22,7 +22,11 @@ class ContentContainer extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: gutter),
-      child: Center(
+      // Top-aligned, not centered: on short pages the scaffold stretches this
+      // region to a full viewport, and a plain Center would float the content
+      // halfway down. We only want the horizontal centering of the column.
+      child: Align(
+        alignment: Alignment.topCenter,
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: maxWidth ?? AppSpacing.contentMaxWidth,

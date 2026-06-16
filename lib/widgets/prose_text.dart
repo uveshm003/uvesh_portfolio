@@ -64,10 +64,10 @@ class _ProseTextState extends State<ProseText> {
         TextSpan(
           text: span.text,
           style: base.copyWith(
-            color: hovered ? palette.accentHover : palette.accent,
+            color: hovered ? palette.linkHover : palette.link,
             decoration: TextDecoration.underline,
-            decorationColor: (hovered ? palette.accentHover : palette.accent)
-                .withValues(alpha: hovered ? 1 : 0.45),
+            decorationColor: (hovered ? palette.linkHover : palette.link)
+                .withValues(alpha: hovered ? 1 : 0.5),
             decorationThickness: 1.2,
           ),
           recognizer: _recognizers[i],

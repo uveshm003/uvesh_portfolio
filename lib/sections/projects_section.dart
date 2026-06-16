@@ -54,29 +54,34 @@ class _ProjectCardState extends State<_ProjectCard> {
     final active = _hovered && _hasLink;
 
     final card = AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
+      duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
       // A gentle lift on hover for linked cards.
-      transform: Matrix4.translationValues(0, active ? -2 : 0, 0),
+      transform: Matrix4.translationValues(0, active ? -3 : 0, 0),
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
+        horizontal: AppSpacing.lg + 2,
         vertical: AppSpacing.lg,
       ),
       decoration: BoxDecoration(
-        color: _hovered
-            ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
+        // Cards rest as soft raised paper, then warm to an accent wash on hover.
+        color: active
+            ? palette.accentSoft
+            : _hovered
+            ? palette.surface
+            : palette.surface.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: active ? palette.accent.withValues(alpha: 0.6) : palette.divider,
+          color: active
+              ? palette.accent.withValues(alpha: 0.55)
+              : palette.divider,
         ),
         // A soft lift only while a linked card is hovered — no chrome at rest.
         boxShadow: active
             ? [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
+                  color: palette.accent.withValues(alpha: 0.12),
+                  blurRadius: 24,
+                  offset: const Offset(0, 10),
                 ),
               ]
             : null,
@@ -152,12 +157,11 @@ class _HeaderRow extends StatelessWidget {
       children: [
         // Editorial index - 01, 02, …
         Padding(
-          padding: const EdgeInsets.only(top: 2, right: AppSpacing.sm),
+          padding: const EdgeInsets.only(top: 1, right: AppSpacing.md),
           child: Text(
             index.toString().padLeft(2, '0'),
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: palette.accent.withValues(alpha: 0.7),
-              fontFeatures: const [FontFeature.tabularFigures()],
+            style: AppTypography.indexNumeral(
+              palette.accent.withValues(alpha: 0.85),
             ),
           ),
         ),
@@ -224,11 +228,12 @@ class _TechTags extends StatelessWidget {
         for (final item in items)
           Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xs + 1,
-              vertical: 3,
+              horizontal: AppSpacing.sm,
+              vertical: 4,
             ),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
+              color: palette.surface.withValues(alpha: 0.7),
+              borderRadius: BorderRadius.circular(7),
               border: Border.all(color: palette.divider),
             ),
             child: Text(

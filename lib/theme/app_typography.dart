@@ -94,4 +94,15 @@ class AppTypography {
     height: 1.3,
     color: color,
   );
+
+  /// Editorial serif numeral for the Projects index (01, 02, …) — picks up the
+  /// heading face so the index reads as a deliberate typographic mark.
+  static TextStyle indexNumeral(Color color) => GoogleFonts.fraunces(
+    fontSize: 19,
+    fontWeight: FontWeight.w500,
+    height: 1,
+    letterSpacing: -0.5,
+    color: color,
+    fontFeatures: const [FontFeature.tabularFigures()],
+  );
 }

@@ -51,7 +51,7 @@ class _HoverLinkState extends State<HoverLink> {
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final base = widget.baseColor ?? palette.textSecondary;
-    final color = _hovered ? palette.accent : base;
+    final color = _hovered ? palette.link : base;
     final style = (widget.style ?? Theme.of(context).textTheme.bodyMedium!)
         .copyWith(color: color);
 

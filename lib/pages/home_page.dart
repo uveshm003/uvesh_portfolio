@@ -15,12 +15,12 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const PageScaffold(
-      topGap: AppSpacing.huge,
+      topGap: AppSpacing.xxxl,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           HeroContent(),
-          SizedBox(height: AppSpacing.huge),
+          SizedBox(height: AppSpacing.xxxl),
           // The Education block trails the hero's entrance sequence.
           FadeIn(
             delay: Duration(milliseconds: 340),

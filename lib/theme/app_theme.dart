@@ -14,6 +14,10 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.textFaint,
     required this.accent,
     required this.accentHover,
+    required this.accentSoft,
+    required this.link,
+    required this.linkHover,
+    required this.surface,
     required this.divider,
   });
 
@@ -22,6 +26,17 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final Color textFaint;
   final Color accent;
   final Color accentHover;
+
+  /// Body-size text-link colors. Kept distinct from [accent] so links stay
+  /// readable (AA) while graphical accent marks can run lighter.
+  final Color link;
+  final Color linkHover;
+
+  /// A faint accent-tinted wash for hovered/selected surfaces.
+  final Color accentSoft;
+
+  /// Soft raised-paper fill for cards and pills (a hair above the page).
+  final Color surface;
   final Color divider;
 
   static const AppPalette light = AppPalette(
@@ -30,6 +45,10 @@ class AppPalette extends ThemeExtension<AppPalette> {
     textFaint: AppColors.lightTextFaint,
     accent: AppColors.lightAccent,
     accentHover: AppColors.lightAccentHover,
+    accentSoft: AppColors.lightAccentSoft,
+    link: AppColors.lightLink,
+    linkHover: AppColors.lightLinkHover,
+    surface: AppColors.lightSurface,
     divider: AppColors.lightDivider,
   );
 
@@ -39,6 +58,10 @@ class AppPalette extends ThemeExtension<AppPalette> {
     textFaint: AppColors.darkTextFaint,
     accent: AppColors.darkAccent,
     accentHover: AppColors.darkAccentHover,
+    accentSoft: AppColors.darkAccentSoft,
+    link: AppColors.darkLink,
+    linkHover: AppColors.darkLinkHover,
+    surface: AppColors.darkSurface,
     divider: AppColors.darkDivider,
   );
 
@@ -53,6 +76,10 @@ class AppPalette extends ThemeExtension<AppPalette> {
     Color? textFaint,
     Color? accent,
     Color? accentHover,
+    Color? accentSoft,
+    Color? link,
+    Color? linkHover,
+    Color? surface,
     Color? divider,
   }) {
     return AppPalette(
@@ -61,6 +88,10 @@ class AppPalette extends ThemeExtension<AppPalette> {
       textFaint: textFaint ?? this.textFaint,
       accent: accent ?? this.accent,
       accentHover: accentHover ?? this.accentHover,
+      accentSoft: accentSoft ?? this.accentSoft,
+      link: link ?? this.link,
+      linkHover: linkHover ?? this.linkHover,
+      surface: surface ?? this.surface,
       divider: divider ?? this.divider,
     );
   }
@@ -74,6 +105,10 @@ class AppPalette extends ThemeExtension<AppPalette> {
       textFaint: Color.lerp(textFaint, other.textFaint, t)!,
       accent: Color.lerp(accent, other.accent, t)!,
       accentHover: Color.lerp(accentHover, other.accentHover, t)!,
+      accentSoft: Color.lerp(accentSoft, other.accentSoft, t)!,
+      link: Color.lerp(link, other.link, t)!,
+      linkHover: Color.lerp(linkHover, other.linkHover, t)!,
+      surface: Color.lerp(surface, other.surface, t)!,
       divider: Color.lerp(divider, other.divider, t)!,
     );
   }
@@ -118,6 +153,9 @@ class AppTheme {
           surface: background,
           primary: accent,
           onSurface: primaryText,
+          // Keep raised surfaces under our control so they track the warm
+          // palette instead of the seed-derived clay-grey.
+          surfaceContainerHighest: palette.surface,
         );
 
     return ThemeData(
