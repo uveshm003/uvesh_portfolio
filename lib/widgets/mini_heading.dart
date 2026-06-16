@@ -20,8 +20,8 @@ class MiniHeading extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 22,
-            height: 2,
+            width: 28,
+            height: 2.5,
             margin: const EdgeInsets.only(right: AppSpacing.sm),
             decoration: BoxDecoration(
               color: palette.accent,
@@ -30,7 +30,7 @@ class MiniHeading extends StatelessWidget {
           ),
           Text(
             label.toUpperCase(),
-            style: AppTypography.sectionLabel(palette.textFaint),
+            style: AppTypography.sectionLabel(palette.textSecondary),
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
+import '../widgets/fade_in.dart';
 import '../widgets/hover_link.dart';
 
 /// Experience - list-style entries (role · company · dates) each with a short
@@ -24,7 +25,12 @@ class ExperienceContent extends StatelessWidget {
             Divider(color: palette.divider, height: 1),
             const SizedBox(height: AppSpacing.xl),
           ],
-          _ExperienceEntry(PortfolioData.experiences[i]),
+          // Entries arrive in a gentle sequence (capped so long lists never
+          // feel slow), echoing the landing page's staggered entrance.
+          FadeIn(
+            delay: Duration(milliseconds: 60 * (i < 5 ? i : 5)),
+            child: _ExperienceEntry(PortfolioData.experiences[i]),
+          ),
         ],
       ],
     );
@@ -75,7 +81,10 @@ class _ExperienceEntry extends StatelessWidget {
         const SizedBox(height: AppSpacing.xxs),
         Text(
           '${entry.period}  ·  ${entry.location}',
-          style: theme.textTheme.bodySmall?.copyWith(color: palette.textFaint),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: palette.textFaint,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(

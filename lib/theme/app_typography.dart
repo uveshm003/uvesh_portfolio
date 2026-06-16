@@ -20,12 +20,13 @@ class AppTypography {
     final sans = GoogleFonts.inter;
 
     return TextTheme(
-      // Hero name.
+      // Page titles (Experience, Projects, …). The Home hero uses the larger,
+      // dedicated [heroName] style instead.
       displaySmall: serif(
-        fontSize: 42,
+        fontSize: 44,
         fontWeight: FontWeight.w600,
         height: 1.1,
-        letterSpacing: -0.5,
+        letterSpacing: -0.6,
         color: primary,
       ),
       // Tagline / large lead.
@@ -64,6 +65,19 @@ class AppTypography {
       ),
     );
   }
+
+  /// The Home hero name — larger and more confident than a page title, with
+  /// tighter optical spacing. Sized responsively by the caller (the hero picks
+  /// [fontSize] from the viewport width) so it stays striking on desktop yet
+  /// never overflows on a phone.
+  static TextStyle heroName(Color color, {double fontSize = 58}) =>
+      GoogleFonts.fraunces(
+        fontSize: fontSize,
+        fontWeight: FontWeight.w600,
+        height: 1.03,
+        letterSpacing: -1.2,
+        color: color,
+      );
 
   /// Small, quiet section label ("Experience", "Projects").
   static TextStyle sectionLabel(Color color) => GoogleFonts.inter(

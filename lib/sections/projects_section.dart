@@ -70,6 +70,16 @@ class _ProjectCardState extends State<_ProjectCard> {
         border: Border.all(
           color: active ? palette.accent.withValues(alpha: 0.6) : palette.divider,
         ),
+        // A soft lift only while a linked card is hovered — no chrome at rest.
+        boxShadow: active
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ]
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

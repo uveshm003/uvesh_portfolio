@@ -4,6 +4,7 @@ import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
 import '../utils/url.dart';
+import '../widgets/fade_in.dart';
 
 /// Books - a quiet reading list. Each entry is a title, author and an optional
 /// one-line take, separated by hairlines.
@@ -12,20 +13,20 @@ class BooksContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
     final books = PortfolioData.books;
     if (books.isEmpty) return const _EmptyState();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Linkable entries float on hover (see _BookEntry) rather than being
+        // boxed by dividers, so they're separated by whitespace alone.
         for (var i = 0; i < books.length; i++) ...[
-          if (i > 0) ...[
-            const SizedBox(height: AppSpacing.lg),
-            Divider(color: palette.divider, height: 1),
-            const SizedBox(height: AppSpacing.lg),
-          ],
-          _BookEntry(books[i]),
+          if (i > 0) const SizedBox(height: AppSpacing.xs),
+          FadeIn(
+            delay: Duration(milliseconds: 60 * (i < 5 ? i : 5)),
+            child: _BookEntry(books[i]),
+          ),
         ],
       ],
     );

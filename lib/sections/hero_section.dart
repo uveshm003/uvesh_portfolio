@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
+import '../theme/app_typography.dart';
+import '../widgets/fade_in.dart';
 import '../widgets/prose_text.dart';
 
 /// The hero / intro shown on the Home page: (optional circular photo,) name,
@@ -15,6 +17,14 @@ class HeroContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final palette = AppPalette.of(context);
+    final width = MediaQuery.sizeOf(context).width;
+
+    // Responsive hero name: bold on desktop, never overflowing on a phone.
+    final nameSize = Breakpoints.isMobile(width)
+        ? 40.0
+        : Breakpoints.isTablet(width)
+        ? 50.0
+        : 58.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,31 +35,52 @@ class HeroContent extends StatelessWidget {
         // assets/images/profile.jpg):
         // const ProfileAvatar(),
         // const SizedBox(height: AppSpacing.xl),
-        Text(PortfolioData.name, style: theme.textTheme.displaySmall),
+
+        // The intro fades in as a short sequence (name → tagline → location →
+        // prose) so the landing page arrives with a little life rather than
+        // all at once. Steps are small and quick to stay calm.
+        FadeIn(
+          child: Text(
+            PortfolioData.name,
+            style: AppTypography.heroName(
+              palette.textPrimary,
+              fontSize: nameSize,
+            ),
+          ),
+        ),
         const SizedBox(height: AppSpacing.sm),
-        Text(
-          PortfolioData.tagline,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            color: palette.textSecondary,
-            fontStyle: FontStyle.italic,
+        FadeIn(
+          delay: const Duration(milliseconds: 90),
+          child: Text(
+            PortfolioData.tagline,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: palette.textSecondary,
+              fontStyle: FontStyle.italic,
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.xs),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.place_outlined, size: 15, color: palette.textFaint),
-            const SizedBox(width: AppSpacing.xxs),
-            Text(
-              PortfolioData.location,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: palette.textFaint,
+        FadeIn(
+          delay: const Duration(milliseconds: 160),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.place_outlined, size: 15, color: palette.textFaint),
+              const SizedBox(width: AppSpacing.xxs),
+              Text(
+                PortfolioData.location,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: palette.textFaint,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: AppSpacing.xl),
-        ProseText(PortfolioData.intro),
+        FadeIn(
+          delay: const Duration(milliseconds: 240),
+          child: ProseText(PortfolioData.intro),
+        ),
       ],
     );
   }

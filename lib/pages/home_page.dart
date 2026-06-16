@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../sections/education_section.dart';
 import '../sections/hero_section.dart';
 import '../theme/app_spacing.dart';
+import '../widgets/fade_in.dart';
 import '../widgets/mini_heading.dart';
 import '../widgets/page_scaffold.dart';
 
@@ -20,9 +21,16 @@ class HomePage extends StatelessWidget {
         children: [
           HeroContent(),
           SizedBox(height: AppSpacing.huge),
-          MiniHeading('Education'),
+          // The Education block trails the hero's entrance sequence.
+          FadeIn(
+            delay: Duration(milliseconds: 340),
+            child: MiniHeading('Education'),
+          ),
           SizedBox(height: AppSpacing.lg),
-          EducationContent(),
+          FadeIn(
+            delay: Duration(milliseconds: 400),
+            child: EducationContent(),
+          ),
         ],
       ),
     );
