@@ -7,6 +7,7 @@ import '../pages/experience_page.dart';
 import '../pages/home_page.dart';
 import '../pages/not_found_page.dart';
 import '../pages/projects_page.dart';
+import '../pages/research_page.dart';
 import '../pages/skills_page.dart';
 import '../theme/theme_controller.dart';
 import '../widgets/app_shell.dart';
@@ -55,6 +56,10 @@ GoRouter buildRouter(ThemeController controller) {
           GoRoute(
             path: '/books',
             pageBuilder: (c, s) => faded(const BooksPage(), s),
+          ),
+          GoRoute(
+            path: '/research',
+            pageBuilder: (c, s) => faded(const ResearchPage(), s),
           ),
         ],
       ),

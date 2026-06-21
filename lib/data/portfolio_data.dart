@@ -18,14 +18,7 @@ class ProseSpan {
 }
 
 class Experience {
-  const Experience({
-    required this.role,
-    required this.company,
-    required this.period,
-    required this.location,
-    required this.blurb,
-    this.url,
-  });
+  const Experience({required this.role, required this.company, required this.period, required this.location, required this.blurb, this.url});
 
   final String role;
   final String company;
@@ -38,13 +31,7 @@ class Experience {
 }
 
 class Project {
-  const Project({
-    required this.title,
-    required this.category,
-    required this.tech,
-    required this.description,
-    this.url,
-  });
+  const Project({required this.title, required this.category, required this.tech, required this.description, this.url});
 
   final String title;
 
@@ -59,8 +46,7 @@ class Project {
   final String? url;
 
   /// The tech string split into individual, trimmed tokens for tag rendering.
-  List<String> get techItems =>
-      tech.split('·').map((t) => t.trim()).where((t) => t.isNotEmpty).toList();
+  List<String> get techItems => tech.split('·').map((t) => t.trim()).where((t) => t.isNotEmpty).toList();
 }
 
 class SkillGroup {
@@ -71,12 +57,7 @@ class SkillGroup {
 }
 
 class EducationItem {
-  const EducationItem({
-    required this.degree,
-    required this.institution,
-    required this.period,
-    required this.score,
-  });
+  const EducationItem({required this.degree, required this.institution, required this.period, required this.score});
 
   final String degree;
   final String institution;
@@ -98,6 +79,16 @@ class NavItem {
   final String path;
 }
 
+/// Shared category vocabulary for the filterable content lists (Blog, Books,
+/// Research). The chip rows derive their options from the values actually used,
+/// and default to [technical] when it's present. Keep these stable so the
+/// "Technical" default works across every section.
+abstract final class ContentCategory {
+  static const String technical = 'Technical';
+  static const String nonTechnical = 'Non-Technical';
+  static const String ai = 'AI / ML';
+}
+
 /// A blog post / writing entry. Add entries to [PortfolioData.blogs] as you
 /// publish; an `url` makes the card link out.
 class BlogPost {
@@ -105,13 +96,25 @@ class BlogPost {
     required this.title,
     required this.date,
     required this.summary,
+    this.category = ContentCategory.technical,
     this.url,
+    this.readingTime,
+    this.tags = const [],
   });
 
   final String title;
   final String date;
   final String summary;
   final String? url;
+
+  /// High-level category used by the page's filter chips (e.g. "Technical").
+  final String category;
+
+  /// Optional estimated read time, e.g. "6 min read".
+  final String? readingTime;
+
+  /// Optional topic tags rendered as small pills.
+  final List<String> tags;
 }
 
 /// A book on the reading list.
@@ -119,18 +122,69 @@ class Book {
   const Book({
     required this.title,
     required this.author,
+    this.category = ContentCategory.technical,
     this.note,
     this.url,
+    this.tag,
+    this.progress,
   });
 
   final String title;
   final String author;
+
+  /// High-level category used by the shelf's filter chips (e.g. "Technical").
+  final String category;
 
   /// Optional one-line personal take.
   final String? note;
 
   /// Optional link (Goodreads, publisher, review, …).
   final String? url;
+
+  /// Optional genre / topic label rendered as a small pill (e.g. "Systems").
+  final String? tag;
+
+  /// Reading progress as a fraction in `0.0 – 1.0`. Set this for books in
+  /// [PortfolioData.currentlyReading] to draw a progress bar; leave null for
+  /// finished books on the shelf.
+  final double? progress;
+}
+
+/// A research paper worth reading. Mirrors [Book] but carries publication
+/// metadata (authors, venue, year) instead of a single author line.
+class ResearchPaper {
+  const ResearchPaper({
+    required this.title,
+    required this.authors,
+    required this.venue,
+    required this.year,
+    this.category = ContentCategory.technical,
+    this.summary,
+    this.url,
+    this.topics = const [],
+  });
+
+  final String title;
+
+  /// High-level category used by the page's filter chips (e.g. "Technical").
+  final String category;
+
+  /// Author line, e.g. "Dean & Ghemawat".
+  final String authors;
+
+  /// Publication venue, e.g. "OSDI", "USENIX ATC".
+  final String venue;
+
+  final String year;
+
+  /// Optional one-line note on why it matters / what it covers.
+  final String? summary;
+
+  /// Optional link (DOI, arXiv, PDF, …).
+  final String? url;
+
+  /// Optional topic tags rendered as small pills.
+  final List<String> topics;
 }
 
 /// ---------------------------------------------------------------------------
@@ -142,8 +196,7 @@ class PortfolioData {
   // ---- Identity -------------------------------------------------------------
   static const String name = 'Muhammad Uvesh Menpurwala';
   static const String shortName = 'Uvesh Menpurwala';
-  static const String tagline =
-      'Software Engineer · Mobile & Cross-Platform Development';
+  static const String tagline = 'Software Engineer · Mobile & Cross-Platform Development';
   static const String location = 'Ahmedabad, India';
 
   // ---- Contact / social -----------------------------------------------------
@@ -323,77 +376,20 @@ class PortfolioData {
 
   // ---- Skills ---------------------------------------------------------------
   static const List<SkillGroup> skills = [
-    SkillGroup(
-      label: 'Languages',
-      items: ['Dart', 'Java', 'Kotlin', 'JavaScript', 'Python', 'C/C++', 'HTML/CSS'],
-    ),
+    SkillGroup(label: 'Languages', items: ['Dart', 'Java', 'Kotlin', 'JavaScript', 'Python', 'C/C++', 'HTML/CSS']),
     SkillGroup(
       label: 'Frameworks & Platforms',
-      items: [
-        'Flutter (Android · iOS · Windows · macOS · Linux · Web)',
-        'Jetpack Compose',
-        'Angular',
-        'Node.js',
-        'Express.js',
-      ],
+      items: ['Flutter (Android · iOS · Windows · macOS · Linux · Web)', 'Jetpack Compose', 'Angular', 'Node.js', 'Express.js'],
     ),
-    SkillGroup(
-      label: 'State Management',
-      items: ['BLoC', 'Riverpod', 'Provider', 'GetX'],
-    ),
-    SkillGroup(
-      label: 'Architecture',
-      items: [
-        'MVVM',
-        'DDD',
-        'Monorepo (Melos)',
-        'Offline-First',
-        'Modular SDK Design',
-      ],
-    ),
+    SkillGroup(label: 'State Management', items: ['BLoC', 'Riverpod', 'Provider', 'GetX']),
+    SkillGroup(label: 'Architecture', items: ['MVVM', 'DDD', 'Monorepo (Melos)', 'Offline-First', 'Modular SDK Design']),
     SkillGroup(
       label: 'Device & Integration',
-      items: [
-        'BLE',
-        'Platform Channels',
-        'ROS SDK',
-        'REST APIs',
-        'WebSocket / Socket.IO',
-        'Firmware Update Workflows',
-      ],
+      items: ['BLE', 'Platform Channels', 'ROS SDK', 'REST APIs', 'WebSocket / Socket.IO', 'Firmware Update Workflows'],
     ),
-    SkillGroup(
-      label: 'Databases & Storage',
-      items: [
-        'Hive',
-        'ObjectBox',
-        'SQLite',
-        'MongoDB',
-        'Firebase Firestore',
-        'Firebase Suite',
-      ],
-    ),
-    SkillGroup(
-      label: 'DevOps & Tools',
-      items: [
-        'Git',
-        'GitHub Actions',
-        'CI/CD',
-        'n8n',
-        'Melos',
-        'Postman',
-        'Android Studio',
-        'VS Code',
-      ],
-    ),
-    SkillGroup(
-      label: 'AI & Automation',
-      items: [
-        'Claude Code',
-        'AI-Assisted Development',
-        'Workflow Automation',
-      ],
-    ),
+    SkillGroup(label: 'Databases & Storage', items: ['Hive', 'ObjectBox', 'SQLite', 'MongoDB', 'Firebase Firestore', 'Firebase Suite']),
+    SkillGroup(label: 'DevOps & Tools', items: ['Git', 'GitHub Actions', 'CI/CD', 'n8n', 'Melos', 'Postman', 'Android Studio', 'VS Code']),
+    SkillGroup(label: 'AI & Automation', items: ['Claude Code', 'AI-Assisted Development', 'Workflow Automation']),
   ];
 
   // ---- Education ------------------------------------------------------------
@@ -421,49 +417,167 @@ class PortfolioData {
     NavItem('Projects', '/projects'),
     NavItem('Skills', '/skills'),
     NavItem('Blog', '/blog'),
-    NavItem('Books', '/books'),
+    NavItem('Reading', '/books'),
+    NavItem('Research', '/research'),
   ];
 
-  static const List<LinkRef> navExternal = [
-    LinkRef('GitHub', githubUrl),
-    LinkRef('LinkedIn', linkedInUrl),
-    LinkRef('Email', emailUrl),
-  ];
+  static const List<LinkRef> navExternal = [LinkRef('GitHub', githubUrl), LinkRef('LinkedIn', linkedInUrl), LinkRef('Email', emailUrl)];
 
   // ---- Blog -----------------------------------------------------------------
   /// Writing. Empty for now - add [BlogPost] entries here as you publish and
   /// the Blog page fills in automatically (an empty list shows a tidy
   /// "coming soon" state).
   static const List<BlogPost> blogs = [
-    // BlogPost(
-    //   title: 'Designing an offline-first sync engine',
-    //   date: 'Jun 2026',
-    //   summary: 'Notes on conflict resolution and local-first storage.',
-    //   url: 'https://example.com/post',
-    // ),
+    BlogPost(
+      title: 'Designing an offline-first sync engine',
+      date: 'Jun 2026',
+      category: ContentCategory.technical,
+      summary: 'Notes on conflict resolution and local-first storage - how to '
+          'keep a Flutter app usable with zero connectivity and reconcile '
+          'cleanly when the network returns.',
+      readingTime: '8 min read',
+      tags: ['Flutter', 'Offline-First', 'Architecture'],
+      url: 'https://example.com/post',
+    ),
+    BlogPost(
+      title: 'Shipping to six platforms from one codebase',
+      date: 'Apr 2026',
+      category: ContentCategory.technical,
+      summary: 'What it actually takes to keep Android, iOS, Windows, macOS, '
+          'Linux and Web honest from a single Flutter codebase.',
+      readingTime: '6 min read',
+      tags: ['Flutter', 'Cross-Platform', 'Release'],
+      url: 'https://example.com/post-2',
+    ),
+    BlogPost(
+      title: 'Staying sane while shipping cross-platform',
+      date: 'Feb 2026',
+      category: ContentCategory.nonTechnical,
+      summary: 'Habits, focus and the non-code side of doing engineering work '
+          'that lasts - what has kept me steady over three years.',
+      readingTime: '4 min read',
+      tags: ['Career', 'Habits'],
+      url: 'https://example.com/post-3',
+    ),
+  ];
+
+  // ---- Currently reading ----------------------------------------------------
+  /// What's on the desk right now. Each entry carries a `progress` fraction
+  /// (0.0 – 1.0) that the Reading page renders as a thin progress bar. Clear
+  /// the list to hide the section entirely.
+  static const List<Book> currentlyReading = [
+    Book(
+      title: 'Designing Data-Intensive Applications',
+      author: 'Martin Kleppmann',
+      tag: 'Systems',
+      progress: 0.45,
+      note: 'Working through the storage and replication chapters.',
+      url: 'https://www.amazon.com/Designing-Data-Intensive-Applications-Reliable-Maintainable/dp/1449373321',
+    ),
+    Book(
+      title: 'Grokking Algorithms',
+      author: 'Aditya Bhargava',
+      tag: 'Foundations',
+      progress: 0.7,
+      url: 'https://www.manning.com/books/grokking-algorithms',
+    ),
   ];
 
   // ---- Books ----------------------------------------------------------------
-  /// Reading list. Empty for now - add books you've actually read and the
-  /// Books page fills in automatically (an empty list shows a tidy
-  /// placeholder). The commented entries below show the format.
+  /// Finished / recommended reads. Add books you've actually read and the
+  /// Reading page fills in the shelf automatically (an empty list shows a tidy
+  /// placeholder).
   static const List<Book> books = [
-    // Book(
-    //   title: 'Designing Data-Intensive Applications',
-    //   author: 'Martin Kleppmann',
-    //   note: 'The mental model behind reliable, scalable backends.',
-    //   url: 'https://example.com/book',
-    // ),
+    Book(
+      title: 'Clean Architecture',
+      author: 'Robert C. Martin',
+      category: ContentCategory.technical,
+      tag: 'Craft',
+      note: 'Sharpened how I draw boundaries between layers in large apps.',
+      url: 'https://www.amazon.com/Clean-Architecture-Craftsmans-Software-Structure/dp/0134494164',
+    ),
+    Book(
+      title: 'The Pragmatic Programmer',
+      author: 'Hunt & Thomas',
+      category: ContentCategory.technical,
+      tag: 'Craft',
+      url: 'https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/',
+    ),
+    Book(
+      title: 'Refactoring',
+      author: 'Martin Fowler',
+      category: ContentCategory.technical,
+      tag: 'Craft',
+      url: 'https://martinfowler.com/books/refactoring.html',
+    ),
+    Book(
+      title: 'The 5AM Club',
+      author: 'Robin Sharma',
+      category: ContentCategory.nonTechnical,
+      tag: 'Habits',
+      url: 'https://www.amazon.com/The-5-AM-Club-Robin-Sharma-audiobook/dp/B07KRM53PR',
+    ),
+    Book(
+      title: 'Atomic Habits',
+      author: 'James Clear',
+      category: ContentCategory.nonTechnical,
+      tag: 'Habits',
+      url: 'https://jamesclear.com/atomic-habits',
+    ),
+  ];
+
+  // ---- Research papers ------------------------------------------------------
+  /// Papers worth a read. Add [ResearchPaper] entries and the Reading page
+  /// renders them; an empty list shows a tidy placeholder.
+  static const List<ResearchPaper> researchPapers = [
+    ResearchPaper(
+      title: 'MapReduce: Simplified Data Processing on Large Clusters',
+      authors: 'Dean & Ghemawat',
+      venue: 'OSDI',
+      year: '2004',
+      category: ContentCategory.technical,
+      topics: ['Distributed Systems', 'Data'],
+      summary: 'The programming model that made large-scale batch processing '
+          'approachable - still the mental model behind modern data pipelines.',
+      url: 'https://research.google/pubs/pub62/',
+    ),
+    ResearchPaper(
+      title: 'In Search of an Understandable Consensus Algorithm (Raft)',
+      authors: 'Ongaro & Ousterhout',
+      venue: 'USENIX ATC',
+      year: '2014',
+      category: ContentCategory.technical,
+      topics: ['Consensus', 'Replication'],
+      summary: 'Consensus designed for human comprehension - the clearest way '
+          'in to how distributed systems agree under failure.',
+      url: 'https://raft.github.io/raft.pdf',
+    ),
+    ResearchPaper(
+      title: 'Dynamo: Amazon\'s Highly Available Key-value Store',
+      authors: 'DeCandia et al.',
+      venue: 'SOSP',
+      year: '2007',
+      category: ContentCategory.technical,
+      topics: ['Availability', 'Storage'],
+      summary: 'Trading strict consistency for always-on availability - the '
+          'roots of eventual consistency and the offline-first systems I build.',
+      url: 'https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf',
+    ),
+    ResearchPaper(
+      title: 'Attention Is All You Need',
+      authors: 'Vaswani et al.',
+      venue: 'NeurIPS',
+      year: '2017',
+      category: ContentCategory.ai,
+      topics: ['Transformers', 'Deep Learning'],
+      summary: 'The transformer architecture behind modern LLMs - essential '
+          'context for the AI-assisted tooling I build with.',
+      url: 'https://arxiv.org/abs/1706.03762',
+    ),
   ];
 
   // ---- Footer ---------------------------------------------------------------
-  static List<LinkRef> get contactLinks => [
-    const LinkRef('Email', emailUrl),
-    LinkRef('Phone', phoneUrl),
-  ];
+  static List<LinkRef> get contactLinks => [const LinkRef('Email', emailUrl), LinkRef('Phone', phoneUrl)];
 
-  static const List<LinkRef> socialLinks = [
-    LinkRef('GitHub', githubUrl),
-    LinkRef('LinkedIn', linkedInUrl),
-  ];
+  static const List<LinkRef> socialLinks = [LinkRef('GitHub', githubUrl), LinkRef('LinkedIn', linkedInUrl)];
 }
