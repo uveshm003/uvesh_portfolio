@@ -9,8 +9,9 @@ import '../theme/theme_controller.dart';
 import 'hover_link.dart';
 
 /// The persistent left identity panel shown on desktop. It stays fixed while
-/// the content pane scrolls: name, role, a vertical section index with an
-/// active marker, a "now" status line, external links and the theme toggle.
+/// the content pane scrolls: name, role, a section index where the active page
+/// is marked with a soft accent pill, a "now" status line, external links and
+/// the theme toggle.
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key, required this.controller});
 
@@ -70,18 +71,23 @@ class Sidebar extends StatelessWidget {
             ),
 
             const SizedBox(height: AppSpacing.xxl),
-            // Section index.
+            // Section index. The slight negative margin lets the active pill
+            // bleed back to the optical edge of the name above it.
             Expanded(
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (final item in PortfolioData.navItems)
-                      _NavRow(
-                        item: item,
-                        active: _isActive(item.path, location),
-                      ),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 2),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (final item in PortfolioData.navItems)
+                        NavPill(
+                          item: item,
+                          active: isActiveRoute(item.path, location),
+                          onTap: () => context.go(item.path),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -115,7 +121,7 @@ class Sidebar extends StatelessWidget {
                   const SizedBox(width: AppSpacing.md),
                 ],
                 const Spacer(),
-                _ThemeToggle(controller: controller),
+                ThemeToggle(controller: controller),
               ],
             ),
           ],
@@ -125,64 +131,89 @@ class Sidebar extends StatelessWidget {
   }
 }
 
-/// One vertical nav row: a leading marker that fills with accent when active,
-/// the label, and a trailing two-digit index. Hover lifts the label color.
-class _NavRow extends StatefulWidget {
-  const _NavRow({required this.item, required this.active});
+/// One navigation row rendered as a pill: the active page fills with a soft
+/// accent wash and an accent label; hover lifts inactive rows onto a faint
+/// surface. The trailing two-digit index keeps the printed-register feel.
+class NavPill extends StatefulWidget {
+  const NavPill({
+    super.key,
+    required this.item,
+    required this.active,
+    required this.onTap,
+  });
 
   final NavItem item;
   final bool active;
+  final VoidCallback onTap;
 
   @override
-  State<_NavRow> createState() => _NavRowState();
+  State<NavPill> createState() => _NavPillState();
 }
 
-class _NavRowState extends State<_NavRow> {
+class _NavPillState extends State<NavPill> {
   bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    final highlight = widget.active || _hovered;
+    final active = widget.active;
+    final highlight = active || _hovered;
     final index = PortfolioData.navItems.indexOf(widget.item) + 1;
+
+    final Color bg = active
+        ? palette.accentSoft
+        : (_hovered ? palette.surface : Colors.transparent);
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
-        onTap: () => context.go(widget.item.path),
+        onTap: widget.onTap,
         behavior: HitTestBehavior.opaque,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs + 1),
-          child: Row(
-            children: [
-              // Active marker.
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 160),
-                width: widget.active ? 18 : (_hovered ? 12 : 8),
-                height: 2,
-                margin: const EdgeInsets.only(right: AppSpacing.sm),
-                color: highlight ? palette.accent : palette.divider,
+          padding: const EdgeInsets.symmetric(vertical: 2),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeOut,
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.xs + 2,
+            ),
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: active
+                    ? palette.accent.withValues(alpha: 0.28)
+                    : Colors.transparent,
               ),
-              Expanded(
-                child: Text(
-                  widget.item.label,
-                  style: AppTypography.mono(
-                    highlight ? palette.textPrimary : palette.textSecondary,
-                    fontSize: 14.5,
-                    weight: widget.active ? FontWeight.w500 : FontWeight.w400,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.item.label,
+                    style: AppTypography.sectionLabel(
+                      active
+                          ? palette.accent
+                          : (highlight ? palette.textPrimary : palette.textSecondary),
+                    ).copyWith(
+                      fontSize: 13,
+                      letterSpacing: 0.6,
+                      fontWeight: active ? FontWeight.w700 : FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
-              Text(
-                index.toString().padLeft(2, '0'),
-                style: AppTypography.mono(
-                  highlight ? palette.accent : palette.textFaint,
-                  fontSize: 11.5,
+                Text(
+                  index.toString().padLeft(2, '0'),
+                  style: AppTypography.mono(
+                    highlight ? palette.accent : palette.textFaint,
+                    fontSize: 11.5,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -191,16 +222,16 @@ class _NavRowState extends State<_NavRow> {
 }
 
 /// The collapsed top bar shown on narrow screens: name (routes Home), the theme
-/// toggle and a popup section menu.
+/// toggle and a hamburger that opens the navigation [NavDrawer].
 class MobileBar extends StatelessWidget {
-  const MobileBar({super.key, required this.controller});
+  const MobileBar({super.key, required this.controller, required this.onMenu});
 
   final ThemeController controller;
+  final VoidCallback onMenu;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    final location = GoRouterState.of(context).uri.path;
 
     return Container(
       height: AppSpacing.mobileBarHeight,
@@ -215,39 +246,17 @@ class MobileBar extends StatelessWidget {
             onTap: () => context.go('/'),
             behavior: HitTestBehavior.opaque,
             child: Text(
-              PortfolioData.shortName.toUpperCase(),
-              style: AppTypography.mono(
-                palette.textPrimary,
-                fontSize: 13.5,
-                weight: FontWeight.w600,
-                letterSpacing: 0.5,
-              ),
+              PortfolioData.shortName,
+              style: AppTypography.heroName(palette.textPrimary, fontSize: 19),
             ),
           ),
           const Spacer(),
-          _ThemeToggle(controller: controller),
+          ThemeToggle(controller: controller),
           const SizedBox(width: AppSpacing.xs),
-          PopupMenuButton<String>(
-            icon: Icon(Icons.menu, color: palette.textPrimary, size: 22),
+          IconButton(
+            icon: Icon(Icons.menu_rounded, color: palette.textPrimary, size: 24),
             tooltip: 'Menu',
-            position: PopupMenuPosition.under,
-            color: Theme.of(context).scaffoldBackgroundColor,
-            onSelected: (path) => context.go(path),
-            itemBuilder: (context) => [
-              for (final item in PortfolioData.navItems)
-                PopupMenuItem<String>(
-                  value: item.path,
-                  child: Text(
-                    item.label,
-                    style: AppTypography.mono(
-                      _isActive(item.path, location)
-                          ? palette.accent
-                          : palette.textPrimary,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-            ],
+            onPressed: onMenu,
           ),
         ],
       ),
@@ -255,8 +264,108 @@ class MobileBar extends StatelessWidget {
   }
 }
 
-class _ThemeToggle extends StatelessWidget {
-  const _ThemeToggle({required this.controller});
+/// The slide-in navigation drawer for narrow screens: identity, the section
+/// index as pills, then external links and the theme toggle.
+class NavDrawer extends StatelessWidget {
+  const NavDrawer({super.key, required this.controller});
+
+  final ThemeController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final location = GoRouterState.of(context).uri.path;
+    final bg = Theme.of(context).scaffoldBackgroundColor;
+
+    void goAndClose(String path) {
+      Navigator.of(context).pop();
+      context.go(path);
+    }
+
+    return Drawer(
+      backgroundColor: bg,
+      shape: Border(left: BorderSide(color: palette.divider)),
+      width: 296,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.xl,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      PortfolioData.shortName,
+                      style: AppTypography.heroName(
+                        palette.textPrimary,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close_rounded, color: palette.textSecondary),
+                    tooltip: 'Close',
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                PortfolioData.tagline.toUpperCase(),
+                style: AppTypography.sectionLabel(palette.accent),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (final item in PortfolioData.navItems)
+                        NavPill(
+                          item: item,
+                          active: isActiveRoute(item.path, location),
+                          onTap: () => goAndClose(item.path),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(height: 1, color: palette.divider),
+              const SizedBox(height: AppSpacing.lg),
+              Row(
+                children: [
+                  for (final link in PortfolioData.navExternal) ...[
+                    HoverLink(
+                      label: link.label,
+                      url: link.url,
+                      baseColor: palette.textSecondary,
+                      style: AppTypography.mono(
+                        palette.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                  ],
+                  const Spacer(),
+                  ThemeToggle(controller: controller),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ThemeToggle extends StatelessWidget {
+  const ThemeToggle({super.key, required this.controller});
 
   final ThemeController controller;
 
@@ -275,7 +384,8 @@ class _ThemeToggle extends StatelessWidget {
   }
 }
 
-bool _isActive(String path, String location) {
+/// Home ('/') matches only exactly; other pages match their path prefix.
+bool isActiveRoute(String path, String location) {
   if (path == '/') return location == '/';
   return location == path || location.startsWith('$path/');
 }

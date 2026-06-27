@@ -72,6 +72,15 @@ class LinkRef {
   final String url;
 }
 
+/// A single proof point shown in the Home hero stat strip. [value] is the loud
+/// numeral, [label] the small mono caption beneath it. Every value here must be
+/// verifiable from the rest of this file — never invent a metric.
+class HeroStat {
+  const HeroStat({required this.value, required this.label});
+  final String value;
+  final String label;
+}
+
 /// A top-nav destination that maps a label to an in-app route.
 class NavItem {
   const NavItem(this.label, this.path);
@@ -230,6 +239,17 @@ class PortfolioData {
     ),
   ];
 
+  // ---- Hero proof points ----------------------------------------------------
+  /// Quick-scan metrics for the Home hero. Each is traceable to the data below:
+  /// "3+ years" from [intro], six platforms from the Flutter targets, "12-15
+  /// apps" from the Kaymatech [experiences] entry, and five [experiences] roles.
+  static const List<HeroStat> heroStats = [
+    HeroStat(value: '3+', label: 'YEARS SHIPPING'),
+    HeroStat(value: '6', label: 'PLATFORMS'),
+    HeroStat(value: '12–15', label: 'APPS DELIVERED'),
+    HeroStat(value: '5', label: 'ENGINEERING ROLES'),
+  ];
+
   // ---- Experience -----------------------------------------------------------
   static const List<Experience> experiences = [
     Experience(
@@ -373,6 +393,11 @@ class PortfolioData {
           'Firestore.',
     ),
   ];
+
+  /// The marquee work surfaced on the Home page — the first four [projects],
+  /// which fill the two-up card grid evenly. The Projects page still shows the
+  /// full index.
+  static List<Project> get featuredProjects => projects.take(4).toList();
 
   // ---- Skills ---------------------------------------------------------------
   static const List<SkillGroup> skills = [

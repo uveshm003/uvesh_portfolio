@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../sections/footer_section.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
-import '../theme/app_typography.dart';
 import 'fade_in.dart';
+import 'mini_heading.dart';
 
 /// Shared wrapper for every routed page, rendered inside the content pane to the
 /// right of the fixed sidebar (or below the mobile bar).
@@ -81,17 +81,7 @@ class _PageScaffoldState extends State<PageScaffold> {
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(width: 22, height: 2, color: palette.accent),
-                  const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    (widget.eyebrow ?? widget.title!).toUpperCase(),
-                    style: AppTypography.sectionLabel(palette.accent),
-                  ),
-                ],
-              ),
+              MiniHeading(widget.eyebrow ?? widget.title!),
               const SizedBox(height: AppSpacing.md),
               Text(widget.title!, style: theme.textTheme.displaySmall),
               if (widget.lead != null) ...[
