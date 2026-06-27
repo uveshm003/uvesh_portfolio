@@ -11,6 +11,7 @@ class ResearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const PageScaffold(
+      eyebrow: 'Papers',
       title: 'Research',
       lead: 'Papers that shaped how I think about systems, data, and the AI '
           'tooling I build with.',

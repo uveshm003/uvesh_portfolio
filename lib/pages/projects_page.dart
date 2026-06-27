@@ -9,6 +9,7 @@ class ProjectsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const PageScaffold(
+      eyebrow: 'Selected work',
       title: 'Projects',
       lead: 'A selection of work across mobile, desktop, robotics and '
           'offline-first apps.',

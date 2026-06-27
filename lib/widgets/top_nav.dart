@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
+import '../theme/app_typography.dart';
 import '../theme/theme_controller.dart';
 import 'content_container.dart';
 
@@ -90,9 +91,12 @@ class _NameLinkState extends State<_NameLink> {
         onTap: () => context.go('/'),
         behavior: HitTestBehavior.opaque,
         child: Text(
-          PortfolioData.shortName,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: _hovered ? palette.accent : palette.textPrimary,
+          PortfolioData.shortName.toUpperCase(),
+          style: AppTypography.mono(
+            _hovered ? palette.accent : palette.textPrimary,
+            fontSize: 13.5,
+            weight: FontWeight.w600,
+            letterSpacing: 0.5,
           ),
         ),
       ),
@@ -181,7 +185,6 @@ class _NavLinkState extends State<_NavLink> {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    final theme = Theme.of(context);
     final highlight = widget.active || _hovered;
 
     return MouseRegion(
@@ -196,9 +199,11 @@ class _NavLinkState extends State<_NavLink> {
           children: [
             Text(
               widget.item.label,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: highlight ? palette.accent : palette.textSecondary,
-                fontWeight: widget.active ? FontWeight.w600 : FontWeight.w400,
+              style: AppTypography.mono(
+                highlight ? palette.accent : palette.textSecondary,
+                fontSize: 13,
+                weight: widget.active ? FontWeight.w500 : FontWeight.w400,
+                letterSpacing: 0.2,
               ),
             ),
             const SizedBox(height: 3),

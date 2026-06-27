@@ -9,8 +9,9 @@ class ExperiencePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const PageScaffold(
+      eyebrow: 'Work history',
       title: 'Experience',
-      lead: 'Three-plus years shipping cross-platform products - from '
+      lead: 'Three-plus years shipping cross-platform products, from '
           'delivery robots to enterprise device tooling.',
       child: ExperienceContent(),
     );

@@ -63,7 +63,7 @@ class _ReadingCardState extends State<ReadingCard> {
             : _hovered
             ? palette.surface
             : palette.surface.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: active ? palette.accent.withValues(alpha: 0.55) : palette.divider,
         ),
@@ -179,7 +179,7 @@ class TagPill extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs + 2, vertical: 3),
       decoration: BoxDecoration(
         color: palette.surface.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: palette.divider),
       ),
       child: Text(
@@ -212,7 +212,7 @@ class ReadingEmptyState extends StatelessWidget {
         vertical: AppSpacing.xl,
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: palette.divider),
       ),
       child: Row(

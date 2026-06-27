@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
-import '../widgets/fade_in.dart';
+import '../theme/app_typography.dart';
 import '../widgets/hover_link.dart';
 
 /// Experience — a quiet vertical timeline. A hairline rail runs down the left
@@ -21,14 +21,9 @@ class ExperienceContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var i = 0; i < entries.length; i++)
-          // Entries arrive in a gentle sequence (capped so long lists never
-          // feel slow), echoing the landing page's staggered entrance.
-          FadeIn(
-            delay: Duration(milliseconds: 60 * (i < 5 ? i : 5)),
-            child: _TimelineEntry(
-              entry: entries[i],
-              isLast: i == entries.length - 1,
-            ),
+          _TimelineEntry(
+            entry: entries[i],
+            isLast: i == entries.length - 1,
           ),
       ],
     );
@@ -115,16 +110,17 @@ class _EntryBody extends StatelessWidget {
     final theme = Theme.of(context);
     final palette = AppPalette.of(context);
 
+    final roleStyle = AppTypography.heroName(palette.textPrimary, fontSize: 21);
     final company = entry.url == null
         ? Text(
             entry.company,
-            style: theme.textTheme.titleMedium?.copyWith(color: palette.accent),
+            style: roleStyle.copyWith(color: palette.accent),
           )
         : HoverLink(
             label: entry.company,
             url: entry.url,
             baseColor: palette.accent,
-            style: theme.textTheme.titleMedium,
+            style: roleStyle.copyWith(color: palette.accent),
           );
 
     return Column(
@@ -134,23 +130,15 @@ class _EntryBody extends StatelessWidget {
         Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Text(entry.role, style: theme.textTheme.titleMedium),
-            Text(
-              '  ·  ',
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: palette.textFaint,
-              ),
-            ),
+            Text(entry.role, style: roleStyle),
+            Text('  ·  ', style: roleStyle.copyWith(color: palette.textFaint)),
             company,
           ],
         ),
-        const SizedBox(height: AppSpacing.xxs),
+        const SizedBox(height: AppSpacing.xs),
         Text(
           '${entry.period}  ·  ${entry.location}',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: palette.textFaint,
-            fontFeatures: const [FontFeature.tabularFigures()],
-          ),
+          style: AppTypography.mono(palette.textFaint, fontSize: 12.5),
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(

@@ -9,6 +9,7 @@ class BlogPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const PageScaffold(
+      eyebrow: 'Writing',
       title: 'Blog',
       lead: 'Thoughts on engineering, cross-platform development and the '
           'occasional deep dive.',

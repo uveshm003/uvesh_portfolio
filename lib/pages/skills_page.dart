@@ -9,6 +9,7 @@ class SkillsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const PageScaffold(
+      eyebrow: 'Capabilities',
       title: 'Skills',
       lead: 'The languages, frameworks and tools I reach for.',
       child: SkillsContent(),

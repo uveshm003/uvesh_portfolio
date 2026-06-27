@@ -4,7 +4,6 @@ import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
 import '../widgets/category_filter.dart';
-import '../widgets/fade_in.dart';
 import 'reading_widgets.dart';
 
 /// Currently reading - the books on the desk right now, each as a card with a
@@ -18,7 +17,7 @@ class CurrentlyReadingContent extends StatelessWidget {
     if (books.isEmpty) {
       return const ReadingEmptyState(
         icon: Icons.auto_stories_outlined,
-        message: "Nothing on the desk right now - I'll surface what I'm "
+        message: "Nothing on the desk right now. I'll surface what I'm "
             'reading here as soon as I crack the next spine.',
       );
     }
@@ -28,10 +27,7 @@ class CurrentlyReadingContent extends StatelessWidget {
       children: [
         for (var i = 0; i < books.length; i++) ...[
           if (i > 0) const SizedBox(height: AppSpacing.sm),
-          FadeIn(
-            delay: Duration(milliseconds: 60 * (i < 5 ? i : 5)),
-            child: _CurrentlyReadingCard(books[i]),
-          ),
+          _CurrentlyReadingCard(books[i]),
         ],
       ],
     );
@@ -168,7 +164,7 @@ class BooksContent extends StatelessWidget {
     if (books.isEmpty) {
       return const ReadingEmptyState(
         icon: Icons.menu_book_outlined,
-        message: 'My reading list is coming together - the books that shaped '
+        message: 'My reading list is coming together. The books that shaped '
             'how I build will appear here soon.',
       );
     }
@@ -178,17 +174,14 @@ class BooksContent extends StatelessWidget {
       categoryOf: (b) => b.category,
       emptyMessage: const ReadingEmptyState(
         icon: Icons.menu_book_outlined,
-        message: 'No books in this category yet - try another.',
+        message: 'No books in this category yet. Try another.',
       ),
       builder: (context, list) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (var i = 0; i < list.length; i++) ...[
             if (i > 0) const SizedBox(height: AppSpacing.sm),
-            FadeIn(
-              delay: Duration(milliseconds: 60 * (i < 5 ? i : 5)),
-              child: _BookCard(list[i]),
-            ),
+            _BookCard(list[i]),
           ],
         ],
       ),

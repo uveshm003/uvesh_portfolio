@@ -4,13 +4,21 @@ import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
-import '../widgets/content_container.dart';
 import '../widgets/hover_link.dart';
 
 /// Footer - grouped links (Contact / Social / Built with) and a copyright line.
 /// Separated from the page body by a hairline and a little breathing room.
+/// Shares the content pane's [gutter] and [measure] so it left-aligns with the
+/// page body above it.
 class FooterSection extends StatelessWidget {
-  const FooterSection({super.key});
+  const FooterSection({
+    super.key,
+    this.gutter = AppSpacing.gutterWide,
+    this.measure = AppSpacing.paneMaxWidth,
+  });
+
+  final double gutter;
+  final double measure;
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +27,22 @@ class FooterSection extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(top: AppSpacing.xxl),
-      padding: const EdgeInsets.only(
+      padding: EdgeInsets.only(
         top: AppSpacing.xxl,
         bottom: AppSpacing.xxxl,
+        left: gutter,
+        right: gutter,
       ),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: palette.divider)),
       ),
-      child: ContentContainer(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: measure),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             Wrap(
               spacing: AppSpacing.huge / 2,
               runSpacing: AppSpacing.xl,
@@ -46,7 +59,8 @@ class FooterSection extends StatelessWidget {
                 color: palette.textFaint,
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -18,6 +18,25 @@ class AppSpacing {
   /// Comfortable reading measure for body prose (centered column cap).
   static const double contentMaxWidth = 700;
 
+  /// Wider measure for the Home hero, where a monospace meta-rail sits beside
+  /// the main column.
+  static const double wideMaxWidth = 940;
+
+  /// Fixed width of the Home meta-rail on desktop.
+  static const double metaRailWidth = 188;
+
+  /// Fixed width of the persistent left sidebar on desktop.
+  static const double sidebarWidth = 312;
+
+  /// Horizontal padding inside the content pane on desktop.
+  static const double paneGutter = 80;
+
+  /// Reading measure inside the content pane (left-aligned, not centered).
+  static const double paneMaxWidth = 880;
+
+  /// Height of the collapsed mobile top bar.
+  static const double mobileBarHeight = 60;
+
   /// Horizontal page gutter on small screens.
   static const double gutterMobile = 22;
 

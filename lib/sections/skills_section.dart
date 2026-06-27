@@ -98,7 +98,7 @@ class _SkillTagState extends State<_SkillTag> {
         ),
         decoration: BoxDecoration(
           color: _hovered ? palette.accentSoft : palette.surface,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: _hovered
                 ? palette.accent.withValues(alpha: 0.45)

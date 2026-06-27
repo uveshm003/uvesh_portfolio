@@ -9,6 +9,9 @@
 .buildlog/
 .history
 .svn/
+.claude/
+_bmad/
+_bmad-output/
 .swiftpm/
 migrate_working_dir/
 

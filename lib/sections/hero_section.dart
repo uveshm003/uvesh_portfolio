@@ -4,105 +4,143 @@ import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
-import '../widgets/fade_in.dart';
-import '../widgets/hover_link.dart';
 import '../widgets/prose_text.dart';
 
-/// The hero / intro shown on the Home page: (optional circular photo,) name,
-/// tagline, location and the flowing prose introduction with inline links.
-/// Left-aligned and prose-forward - no cards, no boxes.
+/// The Home landing, rendered in the content pane beside the fixed sidebar.
+///
+/// Leads with a large statement headline, then the prose introduction and a
+/// platform matrix of the six targets Uvesh ships to. The full name lives in the
+/// sidebar on desktop; on narrow screens it appears here so the page still opens
+/// on the name.
 class HeroContent extends StatelessWidget {
   const HeroContent({super.key});
 
+  /// A concise, true positioning line distilled from the intro.
+  static const String _statement =
+      'I build enterprise-grade, offline-first software that ships to six '
+      'platforms from a single codebase.';
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final palette = AppPalette.of(context);
     final width = MediaQuery.sizeOf(context).width;
+    final isDesktop = Breakpoints.isDesktop(width);
 
-    // Responsive hero name: bold on desktop, never overflowing on a phone.
-    final nameSize = Breakpoints.isMobile(width)
-        ? 40.0
+    final statementSize = Breakpoints.isMobile(width)
+        ? 30.0
         : Breakpoints.isTablet(width)
-        ? 50.0
-        : 58.0;
+        ? 38.0
+        : 46.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // For the arpitbhayani.me-style circular photo, add
-        //   import '../widgets/profile_avatar.dart';
-        // above, then uncomment these two lines (image lives at
-        // assets/images/profile.jpg):
-        // const ProfileAvatar(),
-        // const SizedBox(height: AppSpacing.xl),
-
-        // The intro fades in as a short sequence (name → tagline → location →
-        // prose) so the landing page arrives with a little life rather than
-        // all at once. Steps are small and quick to stay calm.
-        FadeIn(
-          child: Text(
+        // On narrow screens the sidebar is collapsed, so surface the name here.
+        if (!isDesktop) ...[
+          Text(
             PortfolioData.name,
-            style: AppTypography.heroName(
-              palette.textPrimary,
-              fontSize: nameSize,
-            ),
+            style: AppTypography.heroName(palette.textPrimary, fontSize: 40),
           ),
+          const SizedBox(height: AppSpacing.lg),
+        ],
+
+        Text(
+          'INTRODUCTION',
+          style: AppTypography.sectionLabel(palette.accent),
         ),
-        const SizedBox(height: AppSpacing.sm),
-        FadeIn(
-          delay: const Duration(milliseconds: 90),
-          child: Text(
-            PortfolioData.tagline,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: palette.textSecondary,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        FadeIn(
-          delay: const Duration(milliseconds: 160),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.place_outlined, size: 15, color: palette.textFaint),
-              const SizedBox(width: AppSpacing.xxs),
-              Text(
-                PortfolioData.location,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: palette.textFaint,
-                ),
-              ),
-            ],
-          ),
+        const SizedBox(height: AppSpacing.md),
+        Text(
+          _statement,
+          style: AppTypography.heroName(
+            palette.textPrimary,
+            fontSize: statementSize,
+          ).copyWith(height: 1.08, letterSpacing: -0.8),
         ),
         const SizedBox(height: AppSpacing.xl),
-        FadeIn(
-          delay: const Duration(milliseconds: 240),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 620),
           child: ProseText(PortfolioData.intro),
         ),
         const SizedBox(height: AppSpacing.xl),
-        // A quiet "find me" row — actionable links that round out the intro
-        // without breaking the prose-forward feel.
-        FadeIn(
-          delay: const Duration(milliseconds: 320),
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: AppSpacing.lg,
-            runSpacing: AppSpacing.sm,
-            children: [
-              for (final link in PortfolioData.navExternal)
-                HoverLink(
-                  label: link.label,
-                  url: link.url,
-                  baseColor: palette.textSecondary,
-                  showUnderlineWhenIdle: true,
-                ),
-            ],
-          ),
+        const _PlatformMatrix(),
+      ],
+    );
+  }
+}
+
+/// The six Flutter targets Uvesh ships to, drawn as a small status matrix.
+class _PlatformMatrix extends StatelessWidget {
+  const _PlatformMatrix();
+
+  static const List<String> _targets = [
+    'ANDROID',
+    'iOS',
+    'WINDOWS',
+    'macOS',
+    'LINUX',
+    'WEB',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('SHIPS TO', style: AppTypography.sectionLabel(palette.textFaint)),
+            const SizedBox(width: AppSpacing.sm),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Wrap(
+          spacing: AppSpacing.xs,
+          runSpacing: AppSpacing.xs,
+          children: [for (final t in _targets) _PlatformCell(t)],
         ),
       ],
+    );
+  }
+}
+
+class _PlatformCell extends StatelessWidget {
+  const _PlatformCell(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 5),
+      decoration: BoxDecoration(
+        border: Border.all(color: palette.divider),
+        color: palette.surface.withValues(alpha: 0.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 5,
+            height: 5,
+            decoration: BoxDecoration(
+              color: palette.accent,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          Text(
+            label,
+            style: AppTypography.mono(
+              palette.textSecondary,
+              fontSize: 11.5,
+              letterSpacing: 0.8,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

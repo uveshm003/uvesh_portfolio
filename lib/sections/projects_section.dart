@@ -6,41 +6,44 @@ import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import '../utils/url.dart';
 
-/// Projects - selected work as quiet, numbered cards: an index, title and
-/// category, a tech-tag row, and a short description. Cards with a link lift
-/// gently and reveal an arrow on hover. Restrained, but a touch more crafted
-/// than the plain list elsewhere.
+/// Projects — selected work as a large, numbered index. Each entry is a
+/// full-width row separated by a hairline: a big mono index, a large title with
+/// its category, a tech-stack row and a short description. Linked entries warm
+/// to an accent wash, shift their title to accent and reveal an arrow on hover.
 class ProjectsContent extends StatelessWidget {
   const ProjectsContent({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final projects = PortfolioData.projects;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (var i = 0; i < PortfolioData.projects.length; i++) ...[
-          if (i > 0) const SizedBox(height: AppSpacing.md),
-          _ProjectCard(index: i + 1, project: PortfolioData.projects[i]),
-        ],
+        // Top rule opens the index.
+        Container(height: 1, color: palette.divider),
+        for (var i = 0; i < projects.length; i++)
+          _ProjectRow(index: i + 1, project: projects[i]),
       ],
     );
   }
 }
 
-class _ProjectCard extends StatefulWidget {
-  const _ProjectCard({required this.index, required this.project});
+class _ProjectRow extends StatefulWidget {
+  const _ProjectRow({required this.index, required this.project});
 
   final int index;
   final Project project;
 
   @override
-  State<_ProjectCard> createState() => _ProjectCardState();
+  State<_ProjectRow> createState() => _ProjectRowState();
 }
 
-class _ProjectCardState extends State<_ProjectCard> {
+class _ProjectRowState extends State<_ProjectRow> {
   bool _hovered = false;
-
   bool get _hasLink => widget.project.url != null;
+  bool get _active => _hovered && _hasLink;
 
   void _setHover(bool v) {
     if (_hovered != v) setState(() => _hovered = v);
@@ -51,57 +54,97 @@ class _ProjectCardState extends State<_ProjectCard> {
     final theme = Theme.of(context);
     final palette = AppPalette.of(context);
     final project = widget.project;
-    final active = _hovered && _hasLink;
+    final width = MediaQuery.sizeOf(context).width;
+    final compact = width < Breakpoints.tablet;
 
-    final card = AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
+    final titleColor = _active ? palette.accent : palette.textPrimary;
+
+    final row = AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
       curve: Curves.easeOut,
-      // A gentle lift on hover for linked cards.
-      transform: Matrix4.translationValues(0, active ? -3 : 0, 0),
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg + 2,
-        vertical: AppSpacing.lg,
-      ),
       decoration: BoxDecoration(
-        // Cards rest as soft raised paper, then warm to an accent wash on hover.
-        color: active
-            ? palette.accentSoft
-            : _hovered
-            ? palette.surface
-            : palette.surface.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: active
-              ? palette.accent.withValues(alpha: 0.55)
-              : palette.divider,
-        ),
-        // A soft lift only while a linked card is hovered — no chrome at rest.
-        boxShadow: active
-            ? [
-                BoxShadow(
-                  color: palette.accent.withValues(alpha: 0.12),
-                  blurRadius: 24,
-                  offset: const Offset(0, 10),
-                ),
-              ]
-            : null,
+        color: _active ? palette.accentSoft : Colors.transparent,
+        border: Border(bottom: BorderSide(color: palette.divider)),
       ),
-      child: Column(
+      padding: EdgeInsets.fromLTRB(
+        _active ? AppSpacing.md : 0,
+        AppSpacing.xl,
+        0,
+        AppSpacing.xl,
+      ),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _HeaderRow(
-            index: widget.index,
-            project: project,
-            hovered: _hovered,
-            hasLink: _hasLink,
+          // Big index numeral.
+          SizedBox(
+            width: compact ? 44 : 72,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(
+                widget.index.toString().padLeft(2, '0'),
+                style: AppTypography.mono(
+                  _active ? palette.accent : palette.textFaint,
+                  fontSize: compact ? 16 : 20,
+                  weight: FontWeight.w500,
+                ),
+              ),
+            ),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          _TechTags(items: project.techItems),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            project.description,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: palette.textSecondary,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title + category + arrow.
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: AppSpacing.md,
+                        runSpacing: AppSpacing.xxs,
+                        children: [
+                          Text(
+                            project.title,
+                            style: AppTypography.heroName(
+                              titleColor,
+                              fontSize: compact ? 24 : 30,
+                            ),
+                          ),
+                          Text(
+                            project.category.toUpperCase(),
+                            style: AppTypography.sectionLabel(
+                              palette.textFaint,
+                            ).copyWith(fontSize: 10.5, letterSpacing: 1.4),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (_hasLink)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4, left: AppSpacing.sm),
+                        child: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 160),
+                          opacity: _hovered ? 1 : 0.35,
+                          child: Icon(
+                            Icons.north_east,
+                            size: 20,
+                            color: _active ? palette.accent : palette.textFaint,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                _TechTags(items: project.techItems),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  project.description,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: palette.textSecondary,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -112,7 +155,7 @@ class _ProjectCardState extends State<_ProjectCard> {
       return MouseRegion(
         onEnter: (_) => _setHover(true),
         onExit: (_) => _setHover(false),
-        child: card,
+        child: row,
       );
     }
 
@@ -125,89 +168,9 @@ class _ProjectCardState extends State<_ProjectCard> {
         behavior: HitTestBehavior.opaque,
         child: Semantics(
           link: true,
-          label: '${project.title} - open project',
-          child: card,
+          label: '${project.title}, open project',
+          child: row,
         ),
-      ),
-    );
-  }
-}
-
-class _HeaderRow extends StatelessWidget {
-  const _HeaderRow({
-    required this.index,
-    required this.project,
-    required this.hovered,
-    required this.hasLink,
-  });
-
-  final int index;
-  final Project project;
-  final bool hovered;
-  final bool hasLink;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final palette = AppPalette.of(context);
-    final titleColor = (hovered && hasLink) ? palette.accent : palette.textPrimary;
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Editorial index - 01, 02, …
-        Padding(
-          padding: const EdgeInsets.only(top: 1, right: AppSpacing.md),
-          child: Text(
-            index.toString().padLeft(2, '0'),
-            style: AppTypography.indexNumeral(
-              palette.accent.withValues(alpha: 0.85),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.xxs,
-            children: [
-              Text(
-                project.title,
-                style: theme.textTheme.titleMedium?.copyWith(color: titleColor),
-              ),
-              _CategoryTag(project.category),
-            ],
-          ),
-        ),
-        // Arrow affordance for linked projects; slides in on hover.
-        if (hasLink)
-          AnimatedOpacity(
-            duration: const Duration(milliseconds: 180),
-            opacity: hovered ? 1 : 0.45,
-            child: Icon(
-              Icons.north_east,
-              size: 17,
-              color: hovered ? palette.accent : palette.textFaint,
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _CategoryTag extends StatelessWidget {
-  const _CategoryTag(this.label);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-    return Text(
-      label.toUpperCase(),
-      style: AppTypography.sectionLabel(palette.textFaint).copyWith(
-        fontSize: 10.5,
-        letterSpacing: 1.2,
       ),
     );
   }
@@ -233,14 +196,12 @@ class _TechTags extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               color: palette.surface.withValues(alpha: 0.7),
-              borderRadius: BorderRadius.circular(7),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: palette.divider),
             ),
             child: Text(
               item,
-              style: AppTypography.tag(
-                palette.textSecondary,
-              ).copyWith(fontSize: 12),
+              style: AppTypography.tag(palette.textSecondary).copyWith(fontSize: 12),
             ),
           ),
       ],

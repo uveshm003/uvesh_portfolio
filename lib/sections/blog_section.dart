@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
+import '../theme/app_typography.dart';
 import '../widgets/category_filter.dart';
-import '../widgets/fade_in.dart';
 import 'reading_widgets.dart';
 
 /// Blog - writing entries as quiet cards (date kicker, title, summary, topic
@@ -19,7 +19,7 @@ class BlogContent extends StatelessWidget {
     if (blogs.isEmpty) {
       return const ReadingEmptyState(
         icon: Icons.edit_note_outlined,
-        message: "I'm setting up my writing space - notes on Flutter, "
+        message: "I'm setting up my writing space. Notes on Flutter, "
             'cross-platform engineering and devices will land here soon.',
       );
     }
@@ -29,17 +29,14 @@ class BlogContent extends StatelessWidget {
       categoryOf: (p) => p.category,
       emptyMessage: const ReadingEmptyState(
         icon: Icons.edit_note_outlined,
-        message: 'No posts in this category yet - try another.',
+        message: 'No posts in this category yet. Try another.',
       ),
       builder: (context, posts) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (var i = 0; i < posts.length; i++) ...[
             if (i > 0) const SizedBox(height: AppSpacing.md),
-            FadeIn(
-              delay: Duration(milliseconds: 60 * (i < 5 ? i : 5)),
-              child: _BlogCard(posts[i]),
-            ),
+            _BlogCard(posts[i]),
           ],
         ],
       ),
@@ -77,7 +74,7 @@ class _BlogCardState extends State<_BlogCard> {
             post.readingTime != null
                 ? '${post.date}  ·  ${post.readingTime}'
                 : post.date,
-            style: theme.textTheme.bodySmall?.copyWith(color: palette.textFaint),
+            style: AppTypography.mono(palette.textFaint, fontSize: 12),
           ),
           const SizedBox(height: AppSpacing.xs),
           ReadingTitleRow(

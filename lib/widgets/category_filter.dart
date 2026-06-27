@@ -98,7 +98,7 @@ class _FilterChipState extends State<_FilterChip> {
                   : _hovered
                   ? palette.surface
                   : palette.surface.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(
                 color: selected ? palette.accent.withValues(alpha: 0.55) : palette.divider,
               ),

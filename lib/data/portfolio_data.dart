@@ -242,7 +242,7 @@ class PortfolioData {
           'Primary developer on SyncIt, a strategic platform consolidating '
           'legacy Sensit applications into one cross-platform product '
           '(Android, iOS, Windows) built with Flutter on a Melos monorepo. '
-          'Took a POC to a production MVP and architected two variants - '
+          'Took a POC to a production MVP and architected two variants: '
           'SyncIt Lite (offline-first) and SyncIt Plus (cloud sync, advanced '
           'reporting). Built a shared Core Package and a Log Parsing SDK, '
           'device communication modules (log download, parsing, '
@@ -319,8 +319,8 @@ class PortfolioData {
           'Firebase · Socket.IO',
       description:
           'Multi-display delivery-robot platform of nine integrated panels. '
-          'Led the Main Panel - robot control via ROS SDK and native serial '
-          'commands - and the Advertisement Panel, driving dynamic content with '
+          'Led the Main Panel (robot control via ROS SDK and native serial '
+          'commands) and the Advertisement Panel, driving dynamic content with '
           'remote file transfer and scheduling. Added BLE and Nearby '
           'Connections for real-time device coordination.',
     ),
@@ -350,7 +350,7 @@ class PortfolioData {
       tech: 'Flutter · BLoC · ObjectBox · Hive · GoRouter · Offline-First',
       description:
           'A fully offline English-communication trainer that turns daily '
-          'practice into a guided card-draw loop - pick a category, draw a '
+          'practice into a guided card-draw loop: pick a category, draw a '
           'card, read a mini-guide, then speak against a timer and build a '
           'streak. Audio capture and playback included, shipped from a single '
           'codebase to all six Flutter platforms.',
@@ -432,7 +432,7 @@ class PortfolioData {
       title: 'Designing an offline-first sync engine',
       date: 'Jun 2026',
       category: ContentCategory.technical,
-      summary: 'Notes on conflict resolution and local-first storage - how to '
+      summary: 'Notes on conflict resolution and local-first storage: how to '
           'keep a Flutter app usable with zero connectivity and reconcile '
           'cleanly when the network returns.',
       readingTime: '8 min read',
@@ -454,7 +454,7 @@ class PortfolioData {
       date: 'Feb 2026',
       category: ContentCategory.nonTechnical,
       summary: 'Habits, focus and the non-code side of doing engineering work '
-          'that lasts - what has kept me steady over three years.',
+          'that lasts, and what has kept me steady over three years.',
       readingTime: '4 min read',
       tags: ['Career', 'Habits'],
       url: 'https://example.com/post-3',
@@ -538,7 +538,7 @@ class PortfolioData {
       category: ContentCategory.technical,
       topics: ['Distributed Systems', 'Data'],
       summary: 'The programming model that made large-scale batch processing '
-          'approachable - still the mental model behind modern data pipelines.',
+          'approachable. Still the mental model behind modern data pipelines.',
       url: 'https://research.google/pubs/pub62/',
     ),
     ResearchPaper(
@@ -548,8 +548,8 @@ class PortfolioData {
       year: '2014',
       category: ContentCategory.technical,
       topics: ['Consensus', 'Replication'],
-      summary: 'Consensus designed for human comprehension - the clearest way '
-          'in to how distributed systems agree under failure.',
+      summary: 'Consensus designed for human comprehension, and the clearest '
+          'way in to how distributed systems agree under failure.',
       url: 'https://raft.github.io/raft.pdf',
     ),
     ResearchPaper(
@@ -559,7 +559,7 @@ class PortfolioData {
       year: '2007',
       category: ContentCategory.technical,
       topics: ['Availability', 'Storage'],
-      summary: 'Trading strict consistency for always-on availability - the '
+      summary: 'Trading strict consistency for always-on availability. The '
           'roots of eventual consistency and the offline-first systems I build.',
       url: 'https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf',
     ),
@@ -570,7 +570,7 @@ class PortfolioData {
       year: '2017',
       category: ContentCategory.ai,
       topics: ['Transformers', 'Deep Learning'],
-      summary: 'The transformer architecture behind modern LLMs - essential '
+      summary: 'The transformer architecture behind modern LLMs. Essential '
           'context for the AI-assisted tooling I build with.',
       url: 'https://arxiv.org/abs/1706.03762',
     ),

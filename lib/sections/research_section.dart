@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
+import '../theme/app_typography.dart';
 import '../widgets/category_filter.dart';
-import '../widgets/fade_in.dart';
 import 'reading_widgets.dart';
 
 /// Research papers - a small shelf of papers worth reading, filtered by
@@ -29,17 +29,14 @@ class ResearchPapersContent extends StatelessWidget {
       categoryOf: (p) => p.category,
       emptyMessage: const ReadingEmptyState(
         icon: Icons.article_outlined,
-        message: 'No papers in this category yet - try another.',
+        message: 'No papers in this category yet. Try another.',
       ),
       builder: (context, list) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (var i = 0; i < list.length; i++) ...[
             if (i > 0) const SizedBox(height: AppSpacing.sm),
-            FadeIn(
-              delay: Duration(milliseconds: 60 * (i < 5 ? i : 5)),
-              child: _PaperCard(list[i]),
-            ),
+            _PaperCard(list[i]),
           ],
         ],
       ),
@@ -67,7 +64,7 @@ class _PaperCardState extends State<_PaperCard> {
 
     return ReadingCard(
       url: paper.url,
-      semanticLabel: '${paper.title} - open paper',
+      semanticLabel: '${paper.title}, open paper',
       onHover: (v) => setState(() => _hovered = v),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,9 +78,7 @@ class _PaperCardState extends State<_PaperCard> {
           // Authors · Venue · Year - the citation line.
           Text(
             '${paper.authors}  ·  ${paper.venue} ${paper.year}',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: palette.textFaint,
-            ),
+            style: AppTypography.mono(palette.textFaint, fontSize: 12),
           ),
           if (paper.summary != null) ...[
             const SizedBox(height: AppSpacing.sm),

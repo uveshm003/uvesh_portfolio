@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../data/portfolio_data.dart';
 import '../sections/books_section.dart';
 import '../theme/app_spacing.dart';
-import '../widgets/fade_in.dart';
 import '../widgets/mini_heading.dart';
 import '../widgets/page_scaffold.dart';
 
@@ -20,6 +19,7 @@ class BooksPage extends StatelessWidget {
     final hasCurrent = PortfolioData.currentlyReading.isNotEmpty;
 
     return PageScaffold(
+      eyebrow: 'Library',
       title: 'Reading',
       lead: "What's on the desk right now, and the books that shaped how I "
           'build.',
@@ -27,14 +27,14 @@ class BooksPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (hasCurrent) ...const [
-            FadeIn(child: MiniHeading('Currently Reading')),
+            MiniHeading('Currently Reading'),
             SizedBox(height: AppSpacing.lg),
-            FadeIn(delay: Duration(milliseconds: 80), child: CurrentlyReadingContent()),
+            CurrentlyReadingContent(),
             SizedBox(height: AppSpacing.xxl),
           ],
-          const FadeIn(child: MiniHeading('Bookshelf')),
+          const MiniHeading('Bookshelf'),
           const SizedBox(height: AppSpacing.lg),
-          const FadeIn(delay: Duration(milliseconds: 80), child: BooksContent()),
+          const BooksContent(),
         ],
       ),
     );

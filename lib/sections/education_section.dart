@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/portfolio_data.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
-import '../widgets/fade_in.dart';
+import '../theme/app_typography.dart';
 
 /// Education - two quiet list entries (degree · institution · dates · score).
 class EducationContent extends StatelessWidget {
@@ -23,10 +23,7 @@ class EducationContent extends StatelessWidget {
             Divider(color: palette.divider, height: 1),
             const SizedBox(height: AppSpacing.lg),
           ],
-          FadeIn(
-            delay: Duration(milliseconds: 60 * (i < 5 ? i : 5)),
-            child: _EducationEntry(PortfolioData.education[i]),
-          ),
+          _EducationEntry(PortfolioData.education[i]),
         ],
       ],
     );
@@ -57,10 +54,7 @@ class _EducationEntry extends StatelessWidget {
         const SizedBox(height: AppSpacing.xxs),
         Text(
           '${item.period}  ·  ${item.score}',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: palette.textFaint,
-            fontFeatures: const [FontFeature.tabularFigures()],
-          ),
+          style: AppTypography.mono(palette.textFaint, fontSize: 12.5),
         ),
       ],
     );
