@@ -22,9 +22,12 @@
   # Skip Flutter's first-run analytics/animation prompt in CI.
   CI = "true"
 
-# Single-page-app fallback: route every unknown path to index.html so direct
-# links and refreshes always load the app (it then resolves the route).
+# This site has moved to https://uveshm003.github.io (built from
+# uveshm003/mosaic). Every path, including ones that exist here, sends a
+# permanent redirect to the new home page; force = true makes the rule win
+# over the files in build/web.
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
+  to = "https://uveshm003.github.io/"
+  status = 301
+  force = true
